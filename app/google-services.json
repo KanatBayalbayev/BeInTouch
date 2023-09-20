@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "919130474412",
+    "project_id": "beintouch-957b3",
+    "storage_bucket": "beintouch-957b3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:919130474412:android:2ba954cca15a97f17b5c09",
+        "android_client_info": {
+          "package_name": "com.example.beintouch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6H0GKw7jTKHxaTv1ZGduy4u2snLzlgv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
