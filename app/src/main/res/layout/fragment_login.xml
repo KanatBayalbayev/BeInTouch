@@ -73,6 +73,7 @@
             app:boxCornerRadiusTopStart="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailInputLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
@@ -115,6 +116,7 @@
             app:boxStrokeColor="#5d6ade">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordInputLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textVisiblePassword" />
