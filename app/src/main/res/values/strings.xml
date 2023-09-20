@@ -2,4 +2,13 @@
     <string name="app_name">BeInTouch</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="engage_express_connect">Engage. Express. Connect</string>
+    <string name="logo">𝐁𝐞𝐈𝐧𝐓𝐨𝐮𝐜𝐡</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgotPassword">Forgot password</string>
+    <string name="login">Login</string>
+    <string name="remember_me">Remember me</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign up</string>
 </resources>
