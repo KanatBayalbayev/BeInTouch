@@ -7,8 +7,17 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="forgotPassword">Forgot password</string>
-    <string name="login">Login</string>
+    <string name="login">LOGIN</string>
     <string name="remember_me">Remember me</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="sign_up">Sign up</string>
+    <string name="sign_up_logo">Sign Up</string>
+    <string name="username">Full name</string>
+    <string name="createAccount">CREATE ACCOUNT</string>
+    <string name="already_have_an_account">Already have an acoount?</string>
+    <string name="loginText">Login</string>
+    <string name="buttontoback">buttonToBack</string>
+    <string name="forgotpasswordText">Forgot\nPassword?</string>
+    <string name="enter_your_email_and_reset_code_will_be_sent_to_your_email">Enter your email and reset code will be sent\nto your email</string>
+    <string name="reset">RESET</string>
 </resources>
