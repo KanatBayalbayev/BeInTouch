@@ -19,6 +19,7 @@ class ChatAdapter(
         private val binding = ChatItemBinding.bind(view)
 
         fun bind(user: User) {
+            binding.userNameChatItem.text = user.name
 
         }
     }

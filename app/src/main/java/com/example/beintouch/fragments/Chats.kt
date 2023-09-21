@@ -1,6 +1,7 @@
 package com.example.beintouch.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,13 +16,13 @@ import com.example.beintouch.presentation.User
 
 class Chats : Fragment() {
     private lateinit var binding: FragmentChatsBinding
-    private val loginViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var chatAdapter: ChatAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentChatsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -29,8 +30,6 @@ class Chats : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         attachAdapterToRV()
-
-
 
 
     }
@@ -43,6 +42,10 @@ class Chats : Fragment() {
 
         })
         binding.recyclerViewChats.adapter = chatAdapter
+        mainViewModel.userList.observe(viewLifecycleOwner){
+            Log.d("Chats", it.toString())
+            chatAdapter.submitList(it)
+        }
 
     }
 
