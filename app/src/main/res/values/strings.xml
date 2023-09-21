@@ -19,5 +19,7 @@
     <string name="buttontoback">buttonToBack</string>
     <string name="forgotpasswordText">Forgot\nPassword?</string>
     <string name="enter_your_email_and_reset_code_will_be_sent_to_your_email">Enter your email and reset code will be sent\nto your email</string>
-    <string name="reset">RESET</string>
+    <string name="reset">RESET PASSWORD</string>
+    <string name="log_out">Log out</string>
+    <string name="chats">Chats</string>
 </resources>

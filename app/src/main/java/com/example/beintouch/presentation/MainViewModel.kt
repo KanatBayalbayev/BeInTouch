@@ -7,16 +7,22 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class LoginViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     private var authStateListener: AuthStateListener? = null
-
+    private val database = Firebase.database
+    private val users = database.getReference("Users")
 
     private val _isExistedUser = MutableLiveData<FirebaseUser>()
     val isExistedUser: LiveData<FirebaseUser>
         get() = _isExistedUser
+
+    private val _success = MutableLiveData<Boolean>()
+    val success: LiveData<Boolean>
+        get() = _success
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String>
@@ -35,8 +41,7 @@ class LoginViewModel: ViewModel() {
     }
 
 
-
-    fun signInWithEmailAndPassword(email: String, password: String){
+    fun signInWithEmailAndPassword(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 _isExistedUser.value = it.user
@@ -48,9 +53,45 @@ class LoginViewModel: ViewModel() {
             }
 
     }
-//    auth.addAuthStateListener {
-//        if (it.currentUser != null) {
-//            _isExistedUser.value = it.currentUser
-//        }
-//    }
+
+    fun signUpWithEmailAndPassword(email: String, password: String, full_name: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                val userInfo = it.user
+
+                val newUser = userInfo?.let { user ->
+                    User(
+                        user.uid,
+                        email,
+                        password,
+                        full_name,
+                        false
+                    )
+                }
+                if (userInfo != null) {
+                    users.child(userInfo.uid).setValue(newUser)
+                }
+
+
+            }
+            .addOnFailureListener {
+                _error.value = it.message
+            }
+    }
+
+    fun resetPassword(email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                _success.value = true
+            }
+            .addOnFailureListener {
+                _error.value = it.message
+            }
+
+    }
+
+    fun logout() {
+        auth.signOut()
+    }
+
 }

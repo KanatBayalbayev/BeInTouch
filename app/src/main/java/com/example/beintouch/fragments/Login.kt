@@ -11,13 +11,13 @@ import androidx.fragment.app.activityViewModels
 import com.example.beintouch.R
 import com.example.beintouch.databinding.FragmentLoginBinding
 import com.example.beintouch.presentation.AuthStateListener
-import com.example.beintouch.presentation.LoginViewModel
+import com.example.beintouch.presentation.MainViewModel
 import com.google.firebase.auth.FirebaseUser
 
 
 class Login : Fragment() {
     private lateinit var binding: FragmentLoginBinding
-    private val loginViewModel: LoginViewModel by activityViewModels()
+    private val loginViewModel: MainViewModel by activityViewModels()
 
 
     override fun onCreateView(
