@@ -7,5 +7,5 @@ data class User @JvmOverloads constructor(
     val password: String = "",
     val name: String = "",
     val isOnline: Boolean = false
-) {}
+)
 

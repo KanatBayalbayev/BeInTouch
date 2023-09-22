@@ -25,6 +25,7 @@
             app:tint="@color/white" />
 
         <TextView
+            android:id="@+id/companionUserName"
             android:textSize="22sp"
             android:layout_marginStart="14dp"
             android:textColor="@color/white"
@@ -48,7 +49,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <com.google.android.material.textfield.TextInputEditText
+            android:contentDescription="@string/inputmessage"
             android:id="@+id/inputMessageFromUser"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
@@ -57,6 +60,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
+        android:contentDescription="@string/buttontosendmessage"
         android:id="@+id/buttonToSendMessage"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="12dp"
@@ -69,6 +73,7 @@
         app:tint="#2b599c" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewChat"
         app:layout_constraintTop_toBottomOf="@+id/topContainer"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/user_message"

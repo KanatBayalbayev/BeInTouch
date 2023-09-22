@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import com.example.beintouch.R
 import com.example.beintouch.adapters.ChatAdapter
 import com.example.beintouch.adapters.OnItemClickListener
 import com.example.beintouch.databinding.FragmentChatsBinding
@@ -32,20 +33,25 @@ class Chats : Fragment() {
         attachAdapterToRV()
 
 
+
     }
 
     private fun attachAdapterToRV() {
         chatAdapter = ChatAdapter(object : OnItemClickListener {
             override fun onItemClick(item: User) {
+                fragmentManager?.beginTransaction()
+                    ?.replace(R.id.container, Chat.newInstance())
+                    ?.addToBackStack(null)
+                    ?.commit()
 
             }
 
         })
         binding.recyclerViewChats.adapter = chatAdapter
-        mainViewModel.userList.observe(viewLifecycleOwner){
-            Log.d("Chats", it.toString())
+        mainViewModel.userList.observe(viewLifecycleOwner) {
             chatAdapter.submitList(it)
         }
+
 
     }
 

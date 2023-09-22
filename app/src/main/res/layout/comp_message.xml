@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/companionMessage"
+        android:id="@+id/textMessage"
         android:textColor="@color/white"
         android:maxWidth="250dp"
         android:background="@drawable/companion_message_background"

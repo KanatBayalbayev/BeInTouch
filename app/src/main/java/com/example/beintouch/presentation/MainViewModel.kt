@@ -23,6 +23,18 @@ class MainViewModel : ViewModel() {
     val userList: LiveData<List<User>>
         get() = _userList
 
+    private val _messagesList = MutableLiveData<List<Message>>()
+    val messagesList: LiveData<List<Message>>
+        get() = _messagesList
+
+    private val _companionUser = MutableLiveData<User>()
+    val companionUser: LiveData<User>
+        get() = _companionUser
+
+    private val _isMessageSent = MutableLiveData<Boolean>()
+    val isMessageSend: LiveData<Boolean>
+        get() = _isMessageSent
+
     private val _isExistedUser = MutableLiveData<FirebaseUser>()
     val isExistedUser: LiveData<FirebaseUser>
         get() = _isExistedUser
