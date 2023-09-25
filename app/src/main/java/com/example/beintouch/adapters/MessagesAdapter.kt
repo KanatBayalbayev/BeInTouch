@@ -1,6 +1,7 @@
 package com.example.beintouch.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,21 +11,20 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beintouch.R
 import com.example.beintouch.databinding.ChatItemBinding
+import com.example.beintouch.databinding.UserMessageBinding
 import com.example.beintouch.presentation.Message
 import com.example.beintouch.presentation.User
 
 class MessagesAdapter(
     private val userID: String
-) : ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
+): ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
 
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var textMessage: TextView = view.findViewById(R.id.textMessage)
+        private val textViewMessage: TextView = view.findViewById(R.id.textMessage)
 
         fun bind(message: Message) {
-            textMessage.text = message.textMessage
-
-
+            textViewMessage.text = message.textMessage
         }
     }
 
@@ -56,6 +56,7 @@ class MessagesAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val message = getItem(position)
+        Log.d("MessagesAdapter", "UserID: $userID")
         return if (message.senderID == userID){
             USER_MESSAGE
         } else {

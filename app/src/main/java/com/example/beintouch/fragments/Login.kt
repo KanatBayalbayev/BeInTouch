@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser
 
 class Login : Fragment() {
     private lateinit var binding: FragmentLoginBinding
-    private val loginViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
 
     override fun onCreateView(
@@ -41,12 +41,12 @@ class Login : Fragment() {
         binding.buttonToLogin.setOnClickListener {
             val userEmail = binding.emailInputLogin.text.toString().trim()
             val userPassword = binding.passwordInputLogin.text.toString().trim()
-            loginViewModel.signInWithEmailAndPassword(userEmail, userPassword)
+            mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
         }
     }
 
     private fun observeLoginVM() {
-        loginViewModel.error.observe(viewLifecycleOwner) {
+        mainViewModel.error.observe(viewLifecycleOwner) {
             if (it != null) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
             }
@@ -62,8 +62,9 @@ class Login : Fragment() {
 //            }
 //        }
 
-        loginViewModel.setAuthStateListener(object : AuthStateListener{
+        mainViewModel.setAuthStateListener(object : AuthStateListener{
             override fun onUserAuthenticated(user: FirebaseUser?) {
+                Log.d("Login", "USER: ${user?.uid}")
                 fragmentManager?.beginTransaction()
                     ?.replace(R.id.container, Account.newInstance())
                     ?.commit()

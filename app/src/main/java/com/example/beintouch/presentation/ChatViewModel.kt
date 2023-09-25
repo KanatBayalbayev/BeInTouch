@@ -34,6 +34,10 @@ class ChatViewModel(
     val error: LiveData<String>
         get() = _error
 
+    init {
+        med()
+    }
+
     private fun med(){
         users.child(companionID).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -61,7 +65,6 @@ class ChatViewModel(
             override fun onCancelled(error: DatabaseError) {
                 Log.d("ChatViewModel", "Error: " + error.message)
             }
-
         })
     }
 

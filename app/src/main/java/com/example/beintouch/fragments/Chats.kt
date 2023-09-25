@@ -31,6 +31,10 @@ class Chats : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         attachAdapterToRV()
+//        fragmentManager?.beginTransaction()
+//            ?.replace(R.id.container, Chat.newInstance())
+//            ?.addToBackStack(null)
+//            ?.commit()
 
 
 
@@ -39,10 +43,13 @@ class Chats : Fragment() {
     private fun attachAdapterToRV() {
         chatAdapter = ChatAdapter(object : OnItemClickListener {
             override fun onItemClick(item: User) {
+                mainViewModel._companionID.value = item.id
+                mainViewModel.companionName.value = item.name
                 fragmentManager?.beginTransaction()
                     ?.replace(R.id.container, Chat.newInstance())
                     ?.addToBackStack(null)
                     ?.commit()
+
 
             }
 

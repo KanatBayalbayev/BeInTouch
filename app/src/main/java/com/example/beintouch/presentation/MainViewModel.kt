@@ -13,11 +13,29 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+    private val currentUserID: String = "",
+    private val compID: String = "",
+) : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     private var authStateListener: AuthStateListener? = null
     private val database = Firebase.database
     private val users = database.getReference("Users")
+
+    // TODO new impl
+    private val messages = database.getReference("Messages")
+
+
+    private val _userID = MutableLiveData<String?>()
+    val userID: LiveData<String?>
+        get() = _userID
+
+    val _companionID = MutableLiveData<String>()
+    val companionID: LiveData<String?>
+        get() = _companionID
+
+    val companionName = MutableLiveData<String>()
+
 
     private val _userList = MutableLiveData<List<User>>()
     val userList: LiveData<List<User>>
@@ -32,7 +50,7 @@ class MainViewModel : ViewModel() {
         get() = _companionUser
 
     private val _isMessageSent = MutableLiveData<Boolean>()
-    val isMessageSend: LiveData<Boolean>
+    val isMessageSent: LiveData<Boolean>
         get() = _isMessageSent
 
     private val _isExistedUser = MutableLiveData<FirebaseUser>()
@@ -79,6 +97,54 @@ class MainViewModel : ViewModel() {
 
         })
 
+        // TODO
+        messages.child(currentUserID).child(compID).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listOfMessages = arrayListOf<Message>()
+                for (message in snapshot.children){
+                    val messageFromDB = message.getValue(Message::class.java)
+                    if (messageFromDB != null) {
+                        listOfMessages.add(messageFromDB)
+                    }
+                }
+                _messagesList.value = listOfMessages
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("ChatViewModel", "Error: " + error.message)
+            }
+        })
+
+    }
+
+
+    // TODO
+    fun sendMessage(message: Message){
+        messages
+            .child(message.senderID)
+            .child(message.companionID)
+            .push()
+            .setValue(message)
+            .addOnSuccessListener {
+                messages
+                    .child(message.companionID)
+                    .child(message.senderID)
+                    .push()
+                    .setValue(message)
+                    .addOnSuccessListener {
+                        _isMessageSent.value = true
+
+                    }
+                    .addOnFailureListener {
+                        _error.value = it.message
+                        Log.d("ChatViewModel", it.message.toString())
+                    }
+            }
+            .addOnFailureListener {
+                _error.value = it.message
+                Log.d("ChatViewModel", it.message.toString())
+            }
+
     }
 
 
@@ -86,6 +152,8 @@ class MainViewModel : ViewModel() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 _isExistedUser.value = it.user
+                val userID = it.user?.uid
+                _userID.value = userID
                 Log.d("LoginViewModel", "Success: $it")
             }
             .addOnFailureListener {
@@ -99,6 +167,7 @@ class MainViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 val userInfo = it.user
+                _userID.value = it.user?.uid
 
                 val newUser = userInfo?.let { user ->
                     User(
