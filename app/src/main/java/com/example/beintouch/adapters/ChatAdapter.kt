@@ -57,4 +57,12 @@ class ChatAdapter(
             listener.onItemClick(chatItem)
         }
     }
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<User>,
+        currentList: MutableList<User>
+    ) {
+        super.onCurrentListChanged(previousList, currentList)
+        
+    }
 }

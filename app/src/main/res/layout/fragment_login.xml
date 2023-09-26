@@ -33,14 +33,14 @@
             android:textColor="#5d6ade"
             android:textSize="40sp"
             android:textStyle="bold" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="cursive"
             android:text="@string/engage_express_connect"
-            android:textSize="20sp" />
+            android:textSize="24sp" />
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/containerForLogin"
@@ -119,14 +119,9 @@
                 android:id="@+id/passwordInputLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textVisiblePassword" />
+                android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/remember_me"
-            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/buttonToLogin"

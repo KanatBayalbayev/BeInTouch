@@ -15,9 +15,14 @@ import com.example.beintouch.presentation.MainViewModel
 import com.google.firebase.auth.FirebaseUser
 
 
+
+
 class Login : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val mainViewModel: MainViewModel by activityViewModels()
+    private lateinit var userEmail: String
+    private lateinit var userPassword: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,10 +43,11 @@ class Login : Fragment() {
 
     private fun checkUserForLogin() {
         binding.buttonToLogin.setOnClickListener {
-            val userEmail = binding.emailInputLogin.text.toString().trim()
-            val userPassword = binding.passwordInputLogin.text.toString().trim()
+            userEmail = binding.emailInputLogin.text.toString().trim()
+            userPassword = binding.passwordInputLogin.text.toString().trim()
             mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
         }
+
     }
 
     private fun observeLoginVM() {
@@ -51,11 +57,11 @@ class Login : Fragment() {
             }
 
         }
-        mainViewModel.isExistedUser.observe(viewLifecycleOwner){
+        mainViewModel.isExistedUser.observe(viewLifecycleOwner) {
             Log.d("USERDETAIL", "CURRENTUSERID: ${it.uid}")
         }
 
-        mainViewModel.setAuthStateListener(object : AuthStateListener{
+        mainViewModel.setAuthStateListener(object : AuthStateListener {
             override fun onUserAuthenticated(user: FirebaseUser?) {
                 if (user != null) {
                     Log.d("Login", "USER: ${user.uid}")

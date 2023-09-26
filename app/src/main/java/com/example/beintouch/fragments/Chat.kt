@@ -1,39 +1,29 @@
 package com.example.beintouch.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beintouch.R
 import com.example.beintouch.adapters.MessagesAdapter
 import com.example.beintouch.databinding.TestBinding
 import com.example.beintouch.presentation.ChatViewModel
 import com.example.beintouch.presentation.ChatViewModelFactory
-import com.example.beintouch.presentation.MainViewModel
 import com.example.beintouch.presentation.Message
 
 
 class Chat : Fragment() {
     private lateinit var binding: TestBinding
-//    private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var messagesAdapter: MessagesAdapter
 
 
     private lateinit var currentUserID: String
     private lateinit var companionUserID: String
-    private lateinit var viewModel: ChatViewModel
+    private lateinit var chatViewModel: ChatViewModel
 
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        currentUserID = arguments?.getString(KEY_CURRENT_USER_ID).toString()
-//        companionUserID = arguments?.getString(KEY_COMP_USER_ID).toString()
-//
-//    }
 
 
     override fun onCreateView(
@@ -43,7 +33,7 @@ class Chat : Fragment() {
         currentUserID = arguments?.getString(KEY_CURRENT_USER_ID).toString()
         companionUserID = arguments?.getString(KEY_COMP_USER_ID).toString()
         val viewModelFactory = ChatViewModelFactory(currentUserID, companionUserID)
-        viewModel = ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
+        chatViewModel = ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
         binding = TestBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,25 +42,27 @@ class Chat : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         backToChatsFromChat()
         messagesAdapter = MessagesAdapter(currentUserID)
+        binding.testRv.layoutManager = LinearLayoutManager(requireContext())
         binding.testRv.adapter = messagesAdapter
+
         observeViewModel()
         binding.buttonToSendMessage.setOnClickListener {
             val textMessage = binding.inputMessageFromUser.text.toString().trim()
             val message = Message(textMessage, currentUserID, companionUserID)
-            viewModel.sendMessage(message)
+            chatViewModel.sendMessage(message)
         }
 
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.setUserOnline(true)
+        chatViewModel.setUserOnline(true)
 
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.setUserOnline(false)
+        chatViewModel.setUserOnline(false)
     }
 
     private fun backToChatsFromChat() {
@@ -82,10 +74,10 @@ class Chat : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.messagesList.observe(viewLifecycleOwner){
+        chatViewModel.messagesList.observe(viewLifecycleOwner){
             messagesAdapter.submitList(it)
         }
-        viewModel.companionUser.observe(viewLifecycleOwner){
+        chatViewModel.companionUser.observe(viewLifecycleOwner){
             if (it != null) {
                 binding.companionUserName.text = it.name
                 if (it.online){
