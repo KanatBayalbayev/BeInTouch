@@ -10,6 +10,7 @@
         android:id="@+id/textMessage"
         android:textColor="@color/white"
         android:maxWidth="250dp"
+        android:textSize="20sp"
         android:background="@drawable/companion_message_background"
         tools:text = "Very long text andsdds sdsdsas"
         app:layout_constraintTop_toTopOf="parent"

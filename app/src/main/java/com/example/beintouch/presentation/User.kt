@@ -6,6 +6,6 @@ data class User @JvmOverloads constructor(
     val email: String = "" ,
     val password: String = "",
     val name: String = "",
-    val isOnline: Boolean = false
+    val online: Boolean = false
 )
 

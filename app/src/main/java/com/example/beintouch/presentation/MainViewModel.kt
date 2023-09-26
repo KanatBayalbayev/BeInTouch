@@ -13,10 +13,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class MainViewModel(
-    private val currentUserID: String = "",
-    private val compID: String = "",
-) : ViewModel() {
+class MainViewModel: ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     private var authStateListener: AuthStateListener? = null
     private val database = Firebase.database
@@ -29,6 +26,12 @@ class MainViewModel(
     private val _userID = MutableLiveData<String?>()
     val userID: LiveData<String?>
         get() = _userID
+    private val _userName = MutableLiveData<String?>()
+    val userName: LiveData<String?>
+        get() = _userName
+    private val _isUserOnline= MutableLiveData<Boolean?>()
+    val isUserOnline: LiveData<Boolean?>
+        get() = _isUserOnline
 
     val _companionID = MutableLiveData<String>()
     val companionID: LiveData<String?>
@@ -45,8 +48,8 @@ class MainViewModel(
     val messagesList: LiveData<List<Message>>
         get() = _messagesList
 
-    private val _companionUser = MutableLiveData<User>()
-    val companionUser: LiveData<User>
+    private val _companionUser = MutableLiveData<User?>()
+    val companionUser: LiveData<User?>
         get() = _companionUser
 
     private val _isMessageSent = MutableLiveData<Boolean>()
@@ -65,10 +68,21 @@ class MainViewModel(
     val error: LiveData<String>
         get() = _error
 
+
+    // TODO new data
+
+    var newUserID = ""
+    var newCompUserID = ""
+    var newCompUserName= ""
+
     fun setAuthStateListener(listener: AuthStateListener) {
         authStateListener = listener
         auth.addAuthStateListener {
             val user = it.currentUser
+            val userID = user?.uid
+            if (userID != null) {
+                newUserID = userID
+            }
             if (user != null) {
                 authStateListener?.onUserAuthenticated(user)
             } else {
@@ -85,10 +99,17 @@ class MainViewModel(
                             listOfUsers.add(userFromDB)
                         }
                     }
+                    if (auth.currentUser?.uid == user.key){
+                        val userFromDB = user.getValue(User::class.java)
+                        if (userFromDB != null) {
+                            _userName.value = userFromDB.name
+                            _isUserOnline.value = userFromDB.online
+                        }
+                    }
 
                 }
                 _userList.value = listOfUsers
-                Log.d("MainViewModel", listOfUsers.toString())
+                Log.d("MainViewModel", "USERS: $listOfUsers" )
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -98,7 +119,21 @@ class MainViewModel(
         })
 
         // TODO
-        messages.child(currentUserID).child(compID).addValueEventListener(object : ValueEventListener{
+        users.child(newCompUserID).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue(User::class.java)
+                _companionUser.value = user
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("ChatViewModel", "Error: " + error.message)
+            }
+
+        })
+
+
+
+        messages.child(newUserID).child(newCompUserID).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listOfMessages = arrayListOf<Message>()
                 for (message in snapshot.children){
@@ -108,6 +143,7 @@ class MainViewModel(
                     }
                 }
                 _messagesList.value = listOfMessages
+                Log.d("ChatViewModel", "ListOfMessages: $listOfMessages")
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -115,6 +151,13 @@ class MainViewModel(
             }
         })
 
+    }
+
+    fun setUserOnline(isOnline: Boolean){
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            users.child(userId).child("online").setValue(isOnline)
+        }
     }
 
 
@@ -126,6 +169,7 @@ class MainViewModel(
             .push()
             .setValue(message)
             .addOnSuccessListener {
+                Log.d("ChatViewModel", "Message: $it")
                 messages
                     .child(message.companionID)
                     .child(message.senderID)
@@ -153,8 +197,11 @@ class MainViewModel(
             .addOnSuccessListener {
                 _isExistedUser.value = it.user
                 val userID = it.user?.uid
-                _userID.value = userID
+                if (userID != null) {
+                    newUserID = userID
+                }
                 Log.d("LoginViewModel", "Success: $it")
+                Log.d("LoginViewModel", "User: $userID")
             }
             .addOnFailureListener {
                 _error.value = it.message
@@ -167,7 +214,7 @@ class MainViewModel(
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 val userInfo = it.user
-                _userID.value = it.user?.uid
+                newUserID = it.user?.uid.toString()
 
                 val newUser = userInfo?.let { user ->
                     User(

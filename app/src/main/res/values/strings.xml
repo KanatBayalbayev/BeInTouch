@@ -25,4 +25,6 @@
     <string name="backtoaccounticon">backToAccountIcon</string>
     <string name="buttontosendmessage">buttonToSendMessage</string>
     <string name="inputmessage">inputMessage</string>
+    <string name="buttontologout">buttonToLogOut</string>
+    <string name="type_your_message">Type your message</string>
 </resources>

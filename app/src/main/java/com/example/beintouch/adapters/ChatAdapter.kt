@@ -20,6 +20,12 @@ class ChatAdapter(
 
         fun bind(user: User) {
             binding.userNameChatItem.text = user.name
+            if (user.online){
+                binding.statusChatItem.text = "online"
+            } else {
+                binding.statusChatItem.text = "offline"
+            }
+
 
         }
     }
@@ -50,5 +56,13 @@ class ChatAdapter(
         holder.itemView.setOnClickListener {
             listener.onItemClick(chatItem)
         }
+    }
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<User>,
+        currentList: MutableList<User>
+    ) {
+        super.onCurrentListChanged(previousList, currentList)
+        
     }
 }

@@ -13,7 +13,7 @@ import com.example.beintouch.presentation.MainViewModel
 
 class Registration : Fragment() {
     private lateinit var binding: FragmentRegistrationBinding
-    private val loginViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,7 +35,7 @@ class Registration : Fragment() {
             val email = binding.inputEmailSignUp.text.toString().trim()
             val password = binding.inputPasswordSignUp.text.toString().trim()
 
-            loginViewModel.signUpWithEmailAndPassword(email, password, userName)
+            mainViewModel.signUpWithEmailAndPassword(email, password, userName)
         }
     }
 
