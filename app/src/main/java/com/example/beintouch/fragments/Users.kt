@@ -17,7 +17,7 @@ class Users : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentUsersBinding.inflate(inflater, container, false)
         return binding.root
     }

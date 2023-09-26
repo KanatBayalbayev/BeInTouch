@@ -2,11 +2,11 @@ package com.example.beintouch.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.beintouch.R
 import com.example.beintouch.databinding.FragmentLoginBinding
@@ -18,7 +18,6 @@ import com.google.firebase.auth.FirebaseUser
 class Login : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val mainViewModel: MainViewModel by activityViewModels()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,22 +51,19 @@ class Login : Fragment() {
             }
 
         }
-//        loginViewModel.isExistedUser.observe(viewLifecycleOwner) {
-//            Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
-//            if (it != null) {
-//                fragmentManager?.beginTransaction()
-//                    ?.replace(R.id.container, Account.newInstance())
-//                    ?.commit()
-//
-//            }
-//        }
+        mainViewModel.isExistedUser.observe(viewLifecycleOwner){
+            Log.d("USERDETAIL", "CURRENTUSERID: ${it.uid}")
+        }
 
         mainViewModel.setAuthStateListener(object : AuthStateListener{
             override fun onUserAuthenticated(user: FirebaseUser?) {
-                Log.d("Login", "USER: ${user?.uid}")
-                fragmentManager?.beginTransaction()
-                    ?.replace(R.id.container, Account.newInstance())
-                    ?.commit()
+                if (user != null) {
+                    Log.d("Login", "USER: ${user.uid}")
+                    fragmentManager?.beginTransaction()
+                        ?.replace(R.id.container, Chats.newInstance(user.uid))
+                        ?.commit()
+                }
+
             }
 
             override fun onUserUnauthenticated() {

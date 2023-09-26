@@ -43,10 +43,11 @@ class ChatViewModel(
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)
                 _companionUser.value = user
+                Log.d("ChatViewModel", "CompUser: $user")
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.d("ChatViewModel", "Error: " + error.message)
+                Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
             }
 
         })
@@ -60,12 +61,17 @@ class ChatViewModel(
                     }
                 }
                 _messagesList.value = listOfMessages
+                Log.d("ChatViewModel", "Messages: $listOfMessages")
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.d("ChatViewModel", "Error: " + error.message)
+                Log.d("ChatViewModel", "ErrorOFmessages: " + error.message)
             }
         })
+
+    }
+    fun setUserOnline(isOnline: Boolean){
+        users.child(currentUserID).child("online").setValue(isOnline)
     }
 
     fun sendMessage(message: Message){
@@ -75,6 +81,7 @@ class ChatViewModel(
             .push()
             .setValue(message)
             .addOnSuccessListener {
+                Log.d("ChatViewModel", "MessageOfUser: $it")
                 messages
                     .child(message.companionID)
                     .child(message.senderID)
@@ -82,16 +89,18 @@ class ChatViewModel(
                     .setValue(message)
                     .addOnSuccessListener {
                         _isMessageSent.value = true
+                        Log.d("ChatViewModel", "MessageOfCompanion: $it")
 
                     }
                     .addOnFailureListener {
                         _error.value = it.message
-                        Log.d("ChatViewModel", it.message.toString())
+                        Log.d("ChatViewModel", "MessageErrorOfCompanion: " + it.message.toString())
                     }
             }
             .addOnFailureListener {
                 _error.value = it.message
                 Log.d("ChatViewModel", it.message.toString())
+                Log.d("ChatViewModel", "MessageErrorOfCurrentUser: " + it.message.toString())
             }
 
     }
