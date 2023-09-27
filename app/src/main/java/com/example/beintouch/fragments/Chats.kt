@@ -40,6 +40,9 @@ class Chats : Fragment() {
         attachAdapterToRV()
         observeViewModel()
         logOut()
+        binding.findUser.setOnClickListener {
+            mainViewModel.currentUser("Kanat@gmail.com")
+        }
     }
 
     private fun attachAdapterToRV() {

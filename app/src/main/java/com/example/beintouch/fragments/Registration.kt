@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.beintouch.R
 import com.example.beintouch.databinding.FragmentRegistrationBinding
@@ -34,8 +35,11 @@ class Registration : Fragment() {
             val userName = binding.inputNameSignUp.text.toString().trim()
             val email = binding.inputEmailSignUp.text.toString().trim()
             val password = binding.inputPasswordSignUp.text.toString().trim()
-
-            mainViewModel.signUpWithEmailAndPassword(email, password, userName)
+            if (userName.isEmpty() || email.isEmpty() || password.isEmpty()){
+                Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_LONG).show()
+            } else {
+                mainViewModel.signUpWithEmailAndPassword(email, password, userName, false)
+            }
         }
     }
 
@@ -45,6 +49,12 @@ class Registration : Fragment() {
                 ?.replace(R.id.container, Login.newInstance())
                 ?.commit()
         }
+        binding.loginButton.setOnClickListener {
+            fragmentManager?.beginTransaction()
+                ?.replace(R.id.container, Login.newInstance())
+                ?.commit()
+        }
+
     }
 
 

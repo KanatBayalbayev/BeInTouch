@@ -4,26 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beintouch.R
 import com.example.beintouch.adapters.MessagesAdapter
-import com.example.beintouch.databinding.TestBinding
+import com.example.beintouch.databinding.ChatBinding
 import com.example.beintouch.presentation.ChatViewModel
 import com.example.beintouch.presentation.ChatViewModelFactory
 import com.example.beintouch.presentation.Message
 
 
 class Chat : Fragment() {
-    private lateinit var binding: TestBinding
+    private lateinit var binding: ChatBinding
     private lateinit var messagesAdapter: MessagesAdapter
 
 
     private lateinit var currentUserID: String
     private lateinit var companionUserID: String
     private lateinit var chatViewModel: ChatViewModel
-
 
 
     override fun onCreateView(
@@ -34,7 +34,7 @@ class Chat : Fragment() {
         companionUserID = arguments?.getString(KEY_COMP_USER_ID).toString()
         val viewModelFactory = ChatViewModelFactory(currentUserID, companionUserID)
         chatViewModel = ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
-        binding = TestBinding.inflate(inflater, container, false)
+        binding = ChatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -74,16 +74,28 @@ class Chat : Fragment() {
     }
 
     private fun observeViewModel() {
-        chatViewModel.messagesList.observe(viewLifecycleOwner){
+        chatViewModel.messagesList.observe(viewLifecycleOwner) {
             messagesAdapter.submitList(it)
         }
-        chatViewModel.companionUser.observe(viewLifecycleOwner){
+        chatViewModel.companionUser.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.companionUserName.text = it.name
-                if (it.online){
-                    binding.statusCompUserChat.text = "online"
+                if (it.online) {
+                    binding.statusCompUserChat.setText(R.string.statusOnline)
+                    binding.statusCompUserChat.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.greenOnline
+                        )
+                    )
                 } else {
-                    binding.statusCompUserChat.text = "offline"
+                    binding.statusCompUserChat.setText(R.string.statusOffline)
+                    binding.statusCompUserChat.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.redOffline
+                        )
+                    )
                 }
 
             }
@@ -98,7 +110,7 @@ class Chat : Fragment() {
         private const val KEY_COMP_USER_ID = "comp_user_id"
 
         @JvmStatic
-        fun newInstance(parameterUserID: String,parameterCompUserID: String ): Chat {
+        fun newInstance(parameterUserID: String, parameterCompUserID: String): Chat {
             val fragment = Chat()
             val args = Bundle()
             args.putString(KEY_CURRENT_USER_ID, parameterUserID)

@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/textMessage"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:maxWidth="250dp"
         android:textSize="20sp"
         android:background="@drawable/companion_message_background"

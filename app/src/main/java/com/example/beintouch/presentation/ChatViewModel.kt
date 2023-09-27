@@ -16,6 +16,9 @@ class ChatViewModel(
 ): ViewModel() {
     private val database = Firebase.database
     private val users = database.getReference("Users")
+    private val userIdToSearch = "Kanatkz07@mail.ru"
+    private val query = users.orderByChild("email").equalTo(userIdToSearch)
+
     private val messages = database.getReference("Messages")
 
     private val _messagesList = MutableLiveData<List<Message>>()
@@ -36,6 +39,28 @@ class ChatViewModel(
 
     init {
         med()
+        findUser("Kanat@gmail.com")
+    }
+
+    private fun findUser(email: String){
+        users.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (userDb in snapshot.children){
+                    val userEmail = userDb.child("email").getValue(String::class.java)
+                    if (email == userEmail) {
+                        Log.d("FindUserModel", "Found UserEmail: $email")
+                    }
+
+                }
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
     private fun med(){

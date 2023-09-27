@@ -21,9 +21,9 @@ class ChatAdapter(
         fun bind(user: User) {
             binding.userNameChatItem.text = user.name
             if (user.online){
-                binding.statusChatItem.text = "online"
+                binding.statusChatItem.setText(R.string.statusOnline)
             } else {
-                binding.statusChatItem.text = "offline"
+                binding.statusChatItem.setText(R.string.statusOffline)
             }
 
 

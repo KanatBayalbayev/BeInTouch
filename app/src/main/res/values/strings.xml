@@ -26,5 +26,9 @@
     <string name="buttontosendmessage">buttonToSendMessage</string>
     <string name="inputmessage">inputMessage</string>
     <string name="buttontologout">buttonToLogOut</string>
-    <string name="type_your_message">Type your message</string>
+    <string name="type_your_message">Type your message…</string>
+    <string name="logoicon">logoIcon</string>
+    <string name="statusOnline">Online</string>
+    <string name="statusOffline">Offline</string>
+    <string name="buttontofindusers">buttonToFindUsers</string>
 </resources>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.Chats">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="6dp"
+        android:paddingTop="22dp"
+        android:paddingEnd="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/buttonToBackToChatsFromChat"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:contentDescription="@string/backtoaccounticon"
+            android:src="@drawable/left_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/userIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="4dp"
+            android:contentDescription="@string/logoicon"
+            android:src="@drawable/usericon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonToBackToChatsFromChat"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/companionUserName"
+            android:fontFamily="serif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/userIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Kanat Bayalbayev" />
+
+        <TextView
+            android:id="@+id/statusCompUserChat"
+            android:fontFamily="serif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="#008000"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/userIcon"
+            app:layout_constraintTop_toBottomOf="@+id/companionUserName"
+            tools:text="Online" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/underline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userIcon" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/topContainer"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:background="#5d6ade"-->
+    <!--        android:paddingTop="16dp"-->
+    <!--        android:paddingBottom="16dp"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent">-->
+
+    <!--        <ImageView-->
+    <!--            android:id="@+id/buttonToBackToChatsFromChat"-->
+    <!--            android:layout_width="50dp"-->
+    <!--            android:layout_height="30dp"-->
+    <!--            android:contentDescription="@string/backtoaccounticon"-->
+    <!--            android:src="@drawable/left_arrow"-->
+    <!--            app:tint="@color/white" />-->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/companionUserName"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="14dp"-->
+    <!--            android:textColor="@color/white"-->
+    <!--            android:textSize="22sp"-->
+    <!--            tools:text="Jason" />-->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/statusCompUserChat"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="150dp"-->
+    <!--            android:textColor="@color/white"-->
+    <!--            android:textSize="14sp"-->
+    <!--            tools:text="online" />-->
+
+    <!--        <View-->
+    <!--            android:layout_width="15dp"-->
+    <!--            android:layout_height="15dp"-->
+    <!--            android:layout_marginStart="3dp"-->
+    <!--            android:layout_marginTop="11dp"-->
+    <!--            android:background="@drawable/green_circle" />-->
+
+
+    <!--    </LinearLayout>-->
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/testRv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/inputMessageFromUser"
+        app:layout_constraintTop_toBottomOf="@+id/topContainer"
+        tools:listitem="@layout/user_message" />
+
+    <!--    <com.google.android.material.textfield.TextInputLayout-->
+    <!--        android:id="@+id/inputLayout"-->
+    <!--        android:layout_marginStart="6dp"-->
+    <!--        android:layout_marginEnd="6dp"-->
+    <!--        app:boxStrokeColor="#5d6ade"-->
+    <!--        android:layout_marginBottom="4dp"-->
+    <!--        app:boxCornerRadiusBottomEnd="14dp"-->
+    <!--        app:boxCornerRadiusBottomStart="14dp"-->
+    <!--        app:boxCornerRadiusTopEnd="14dp"-->
+    <!--        app:boxCornerRadiusTopStart="14dp"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        android:background="@null"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content">-->
+
+    <!--        <com.google.android.material.textfield.TextInputEditText-->
+    <!--            android:contentDescription="@string/inputmessage"-->
+    <!--            android:id="@+id/inputMessageFromUser"-->
+    <!--            android:paddingStart="20dp"-->
+    <!--            android:paddingEnd="50dp"-->
+    <!--            android:background = "@color/white"-->
+    <!--            android:inputType="text"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"/>-->
+    <!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+    <EditText
+        android:id="@+id/inputMessageFromUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="16dp"
+        android:autofillHints="name"
+        android:background="@drawable/rounded_background_edit_text"
+        android:hint="@string/type_your_message"
+        android:inputType="textMultiLine"
+        android:lines="2"
+        android:maxWidth="100dp"
+        android:paddingStart="20dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="100dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <View
+        android:id="@+id/buttonBackground"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="0dp"
+        android:background="@drawable/circle_button_to_send_message"
+        app:layout_constraintBottom_toBottomOf="@+id/inputMessageFromUser"
+        app:layout_constraintEnd_toEndOf="@+id/inputMessageFromUser"
+        app:layout_constraintTop_toTopOf="@+id/inputMessageFromUser" />
+
+    <ImageView
+        android:id="@+id/buttonToSendMessage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="4dp"
+        android:contentDescription="@string/buttontosendmessage"
+        android:src="@drawable/paper_plane"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonBackground"
+        app:layout_constraintEnd_toEndOf="@+id/buttonBackground"
+        app:layout_constraintStart_toStartOf="@+id/buttonBackground"
+        app:layout_constraintTop_toTopOf="@+id/buttonBackground" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

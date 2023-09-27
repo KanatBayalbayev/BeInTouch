@@ -15,8 +15,6 @@ import com.example.beintouch.presentation.MainViewModel
 import com.google.firebase.auth.FirebaseUser
 
 
-
-
 class Login : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -37,7 +35,7 @@ class Login : Fragment() {
         launchSignUp()
         launchReset()
         checkUserForLogin()
-        observeLoginVM()
+        observeViewModel()
 
     }
 
@@ -45,20 +43,22 @@ class Login : Fragment() {
         binding.buttonToLogin.setOnClickListener {
             userEmail = binding.emailInputLogin.text.toString().trim()
             userPassword = binding.passwordInputLogin.text.toString().trim()
-            mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
+            if (userEmail.isEmpty() || userPassword.isEmpty()
+            ) {
+                Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_LONG).show()
+            } else {
+                mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
+            }
         }
 
     }
 
-    private fun observeLoginVM() {
+    private fun observeViewModel() {
         mainViewModel.error.observe(viewLifecycleOwner) {
             if (it != null) {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Неправильно введен email или password!", Toast.LENGTH_LONG).show()
             }
 
-        }
-        mainViewModel.isExistedUser.observe(viewLifecycleOwner) {
-            Log.d("USERDETAIL", "CURRENTUSERID: ${it.uid}")
         }
 
         mainViewModel.setAuthStateListener(object : AuthStateListener {
