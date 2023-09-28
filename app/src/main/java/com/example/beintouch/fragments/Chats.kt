@@ -1,5 +1,7 @@
 package com.example.beintouch.fragments
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +10,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.beintouch.R
@@ -26,6 +29,7 @@ class Chats : Fragment() {
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var currentUserID: String
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,9 +44,11 @@ class Chats : Fragment() {
         attachAdapterToRV()
         observeViewModel()
         logOut()
-        binding.findUser.setOnClickListener {
-            mainViewModel.currentUser("Kanat@gmail.com")
-        }
+        showDialogSearchUser()
+        closeAlertDialog()
+
+
+
     }
 
     private fun attachAdapterToRV() {
@@ -70,39 +76,67 @@ class Chats : Fragment() {
     }
 
 
-
-    private fun observeViewModel(){
+    private fun observeViewModel() {
         mainViewModel.setAuthStateListener(object : AuthStateListener {
             override fun onUserAuthenticated(user: FirebaseUser?) {
 
             }
+
             override fun onUserUnauthenticated() {
                 mainViewModel.setUserOnline(false)
 
             }
         })
-        mainViewModel.userName.observe(viewLifecycleOwner){
+        mainViewModel.userName.observe(viewLifecycleOwner) {
             binding.userNameAccount.text = it
         }
     }
 
 
-    private fun openChatFragment(currentUserId: String, compUserId: String){
+    private fun openChatFragment(currentUserId: String, compUserId: String) {
         val fragment = Chat.newInstance(currentUserId, compUserId)
         val transaction = fragmentManager?.beginTransaction()
         transaction?.replace(R.id.container, fragment)
         transaction?.commit()
     }
-    private fun openLoginFragment(){
+
+    private fun openLoginFragment() {
         fragmentManager?.beginTransaction()
             ?.replace(R.id.container, Login.newInstance())
             ?.commit()
     }
 
-    private fun logOut(){
+    private fun logOut() {
         binding.buttonToLogOut.setOnClickListener {
             mainViewModel.logout()
             openLoginFragment()
+        }
+
+    }
+
+    private fun showDialogSearchUser(){
+        binding.findUser.setOnClickListener {
+            dialogSearchUser()
+        }
+    }
+    private fun dialogSearchUser() {
+        binding.dialogSearchUser.visibility = View.VISIBLE
+        binding.overlayView.visibility = View.VISIBLE
+        binding.overlayView.isClickable = true
+        binding.searchUser.setOnClickListener {
+            val user = binding.inputSearchUser.text.toString().trim()
+            if (user.isEmpty()) {
+                Toast.makeText(requireContext(), "Enter user email!", Toast.LENGTH_LONG).show()
+            } else {
+                mainViewModel.currentUser(user)
+            }
+        }
+    }
+    private fun closeAlertDialog() {
+        binding.buttonToCloseDialog.setOnClickListener {
+            binding.dialogSearchUser.visibility = View.GONE
+            binding.overlayView.visibility = View.GONE
+            binding.overlayView.isClickable = false
         }
 
     }

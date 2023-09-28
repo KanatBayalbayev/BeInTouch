@@ -115,7 +115,6 @@ class MainViewModel : ViewModel() {
             .addOnFailureListener {
                 _error.value = it.message
             }
-
     }
 
     fun signUpWithEmailAndPassword(

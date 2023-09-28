@@ -31,4 +31,5 @@
     <string name="statusOnline">Online</string>
     <string name="statusOffline">Offline</string>
     <string name="buttontofindusers">buttonToFindUsers</string>
+    <string name="type_user_email">Type user email...</string>
 </resources>
