@@ -1,13 +1,7 @@
 package com.example.beintouch.fragments
 
-import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -59,6 +53,7 @@ class Chats : Fragment() {
 
         })
         binding.recyclerViewChats.adapter = chatAdapter
+
         mainViewModel.userList.observe(viewLifecycleOwner) {
             chatAdapter.submitList(it)
         }
@@ -128,9 +123,20 @@ class Chats : Fragment() {
             if (user.isEmpty()) {
                 Toast.makeText(requireContext(), "Enter user email!", Toast.LENGTH_LONG).show()
             } else {
-                mainViewModel.currentUser(user)
+                mainViewModel.findUser(user)
+                binding.buttonToAddUserToChats.visibility = View.VISIBLE
+                binding.foundUserIcon.visibility = View.VISIBLE
             }
         }
+        mainViewModel.foundUser.observe(viewLifecycleOwner){user ->
+            if (user != null) {
+                binding.foundUserName.text = user.name
+                binding.buttonToAddUserToChats.setOnClickListener {
+                       mainViewModel.addFoundUserToChats(user)
+                }
+            }
+        }
+
     }
     private fun closeAlertDialog() {
         binding.buttonToCloseDialog.setOnClickListener {

@@ -5,13 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 class MainViewModel : ViewModel() {
@@ -19,7 +17,11 @@ class MainViewModel : ViewModel() {
     private var authStateListener: AuthStateListener? = null
     private val database = Firebase.database
     private val users = database.getReference("Users")
+    private val friends = database.getReference("Friends")
 
+    private val _foundUser = MutableLiveData<User?>()
+    val foundUser: LiveData<User?>
+        get() = _foundUser
 
     private val _userName = MutableLiveData<String?>()
     val userName: LiveData<String?>
@@ -37,26 +39,48 @@ class MainViewModel : ViewModel() {
     val error: LiveData<String>
         get() = _error
 
-    fun currentUser(email: String) {
+    fun findUser(email: String) {
         users.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val listOfUsers = arrayListOf<User>()
+//                val listOfUsers = arrayListOf<User>()
                 for (userDb in snapshot.children) {
                     val userEmail = userDb.child("email").getValue(String::class.java)
                     if (email == userEmail) {
                         val userFromDB = userDb.getValue(User::class.java)
                         if (userFromDB != null) {
-                            listOfUsers.add(userFromDB)
+//                            listOfUsers.add(userFromDB)
+                            _foundUser.value = userFromDB
+                            Log.d("FoundUser", userFromDB.name)
                         }
                     }
                 }
-                _userList.value = listOfUsers
-                Log.d("New Users", listOfUsers.toString())
-
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.d("New Users", error.toString())
+            }
+
+        })
+    }
+
+    fun addFoundUserToChats(foundUser: User) {
+        friends.child(foundUser.id).setValue(foundUser)
+        friends.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listOfFriends = arrayListOf<User>()
+                for (friend in snapshot.children){
+                    if (auth.currentUser?.uid != friend.key) {
+                        val friendFromDB = friend.getValue(User::class.java)
+                        if (friendFromDB != null) {
+                            listOfFriends.add(friendFromDB)
+                        }
+                    }
+                }
+                _userList.value = listOfFriends
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("FoundUsers", error.toString())
             }
 
         })
@@ -98,6 +122,25 @@ class MainViewModel : ViewModel() {
             override fun onCancelled(error: DatabaseError) {
                 Log.d("MainViewModel", error.message)
             }
+        })
+        friends.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listOfFriends = arrayListOf<User>()
+                for (friend in snapshot.children){
+                    if (auth.currentUser?.uid != friend.key) {
+                        val friendFromDB = friend.getValue(User::class.java)
+                        if (friendFromDB != null) {
+                            listOfFriends.add(friendFromDB)
+                        }
+                    }
+                }
+                _userList.value = listOfFriends
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("Friends", error.message)
+            }
+
         })
     }
 

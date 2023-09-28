@@ -151,22 +151,37 @@
             android:background="@drawable/underline" />
 
         <LinearLayout
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewUsers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="1"
-                tools:listitem="@layout/user_item" />
+            <ImageView
+                android:id="@+id/foundUserIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:contentDescription="@string/logoicon"
+                android:src="@drawable/usericon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/foundUserName"
+                android:textSize="18sp"
+                android:layout_marginStart="12dp"
+                tools:text="Имя"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
             <ImageView
                 android:id="@+id/buttonToAddUserToChats"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                tools:visibility="visible"
+                android:layout_marginStart="163dp"
+                android:visibility="gone"
                 android:src="@android:drawable/ic_input_add" />
 
         </LinearLayout>
