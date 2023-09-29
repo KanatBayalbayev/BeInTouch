@@ -20,10 +20,15 @@ class ChatViewModel(
     private val query = users.orderByChild("email").equalTo(userIdToSearch)
 
     private val messages = database.getReference("Messages")
+    private val friends = database.getReference("Friends")
 
     private val _messagesList = MutableLiveData<List<Message>>()
     val messagesList: LiveData<List<Message>>
         get() = _messagesList
+
+    private val _currUser = MutableLiveData<User?>()
+    val currUser: LiveData<User?>
+        get() = _currUser
 
     private val _companionUser = MutableLiveData<User?>()
     val companionUser: LiveData<User?>
@@ -76,6 +81,18 @@ class ChatViewModel(
             }
 
         })
+        users.child(currentUserID).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue(User::class.java)
+                _currUser.value = user
+                Log.d("ChatViewModel", "CompUser: $user")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
+            }
+
+        })
         messages.child(currentUserID).child(companionID).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listOfMessages = arrayListOf<Message>()
@@ -99,7 +116,8 @@ class ChatViewModel(
         users.child(currentUserID).child("online").setValue(isOnline)
     }
 
-    fun sendMessage(message: Message){
+    fun sendMessage(message: Message, foundUser: User){
+        friends.child(message.companionID).child(message.senderID).setValue(foundUser)
         messages
             .child(message.senderID)
             .child(message.companionID)

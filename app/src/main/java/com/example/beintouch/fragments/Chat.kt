@@ -14,6 +14,7 @@ import com.example.beintouch.databinding.ChatBinding
 import com.example.beintouch.presentation.ChatViewModel
 import com.example.beintouch.presentation.ChatViewModelFactory
 import com.example.beintouch.presentation.Message
+import com.example.beintouch.presentation.User
 
 
 class Chat : Fragment() {
@@ -23,6 +24,7 @@ class Chat : Fragment() {
 
     private lateinit var currentUserID: String
     private lateinit var companionUserID: String
+    private lateinit var currentUser: User
     private lateinit var chatViewModel: ChatViewModel
 
 
@@ -49,7 +51,7 @@ class Chat : Fragment() {
         binding.buttonToSendMessage.setOnClickListener {
             val textMessage = binding.inputMessageFromUser.text.toString().trim()
             val message = Message(textMessage, currentUserID, companionUserID)
-            chatViewModel.sendMessage(message)
+            chatViewModel.sendMessage(message, currentUser)
         }
 
     }
@@ -98,6 +100,11 @@ class Chat : Fragment() {
                     )
                 }
 
+            }
+        }
+        chatViewModel.currUser.observe(viewLifecycleOwner){
+            if (it != null) {
+                currentUser = it
             }
         }
 

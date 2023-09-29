@@ -81,7 +81,7 @@ class Chats : Fragment() {
                 mainViewModel.setUserOnline(false)
 
             }
-        })
+        }, currentUserID)
         mainViewModel.userName.observe(viewLifecycleOwner) {
             binding.userNameAccount.text = it
         }
@@ -132,7 +132,7 @@ class Chats : Fragment() {
             if (user != null) {
                 binding.foundUserName.text = user.name
                 binding.buttonToAddUserToChats.setOnClickListener {
-                       mainViewModel.addFoundUserToChats(user)
+                    mainViewModel.addFoundUserToChats(user)
                 }
             }
         }

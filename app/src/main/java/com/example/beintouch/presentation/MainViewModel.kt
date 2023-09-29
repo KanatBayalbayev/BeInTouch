@@ -64,15 +64,18 @@ class MainViewModel : ViewModel() {
     }
 
     fun addFoundUserToChats(foundUser: User) {
-        friends.child(foundUser.id).setValue(foundUser)
+        friends.child(auth.currentUser?.uid ?: "").child(foundUser.id).setValue(foundUser)
         friends.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listOfFriends = arrayListOf<User>()
-                for (friend in snapshot.children){
-                    if (auth.currentUser?.uid != friend.key) {
-                        val friendFromDB = friend.getValue(User::class.java)
-                        if (friendFromDB != null) {
-                            listOfFriends.add(friendFromDB)
+
+                for (user in snapshot.children){
+                    if (user.key == auth.currentUser?.uid){
+                        for (friend in user.children){
+                            val friendFromDB = friend.getValue(User::class.java)
+                            if (friendFromDB != null) {
+                                listOfFriends.add(friendFromDB)
+                            }
                         }
                     }
                 }
@@ -82,20 +85,55 @@ class MainViewModel : ViewModel() {
             override fun onCancelled(error: DatabaseError) {
                 Log.d("FoundUsers", error.toString())
             }
-
         })
     }
 
-    fun setAuthStateListener(listener: AuthStateListener) {
+    fun setAuthStateListener(listener: AuthStateListener, currentUser: String = "") {
         authStateListener = listener
         auth.addAuthStateListener {
             val user = it.currentUser
+
             if (user != null) {
                 authStateListener?.onUserAuthenticated(user)
             } else {
                 authStateListener?.onUserUnauthenticated()
             }
         }
+        friends.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listOfFriends = arrayListOf<User>()
+                for (users in snapshot.children){
+                    val userKey = users.key
+                    if (userKey == currentUser){
+                        for (friend in users.children){
+                            val friendFromDB = friend.getValue(User::class.java)
+                            if (friendFromDB != null) {
+                                listOfFriends.add(friendFromDB)
+                            }
+                        }
+                    }
+                }
+                _userList.value = listOfFriends
+
+
+//                for (friend in snapshot.children){
+//                    if (auth.currentUser?.uid != friend.key) {
+//                        val friendFromDB = friend.getValue(User::class.java)
+//                        if (friendFromDB != null) {
+//                            listOfFriends.add(friendFromDB)
+//                        }
+//                    }
+//                }
+//                _userList.value = listOfFriends
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("Friends", error.message)
+            }
+
+        })
+
+
         users.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listOfUsers = arrayListOf<User>()
@@ -123,25 +161,25 @@ class MainViewModel : ViewModel() {
                 Log.d("MainViewModel", error.message)
             }
         })
-        friends.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val listOfFriends = arrayListOf<User>()
-                for (friend in snapshot.children){
-                    if (auth.currentUser?.uid != friend.key) {
-                        val friendFromDB = friend.getValue(User::class.java)
-                        if (friendFromDB != null) {
-                            listOfFriends.add(friendFromDB)
-                        }
-                    }
-                }
-                _userList.value = listOfFriends
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("Friends", error.message)
-            }
-
-        })
+//        friends.addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val listOfFriends = arrayListOf<User>()
+//                for (friend in snapshot.children){
+//                    if (auth.currentUser?.uid != friend.key) {
+//                        val friendFromDB = friend.getValue(User::class.java)
+//                        if (friendFromDB != null) {
+//                            listOfFriends.add(friendFromDB)
+//                        }
+//                    }
+//                }
+//                _userList.value = listOfFriends
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("Friends", error.message)
+//            }
+//
+//        })
     }
 
     fun setUserOnline(isOnline: Boolean) {
