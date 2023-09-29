@@ -17,6 +17,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <View
+        android:id="@+id/backroundForMark"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="-9dp"
+        android:layout_marginBottom="-9dp"
+        android:background="@drawable/circle_button_to_mark_message"
+        app:layout_constraintBottom_toBottomOf="@+id/userIcon"
+        app:layout_constraintEnd_toEndOf="@+id/userIcon" />
+
+    <ImageView
+        android:id="@+id/sign"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:contentDescription="@string/logoicon"
+        android:src="@drawable/check_solid"
+        app:layout_constraintTop_toTopOf="@+id/backroundForMark"
+        app:layout_constraintStart_toStartOf="@+id/backroundForMark"
+        app:layout_constraintBottom_toBottomOf="@+id/backroundForMark"
+        app:layout_constraintEnd_toEndOf="@+id/backroundForMark"
+        app:tint="@color/white" />
+
     <TextView
         android:id="@+id/userNameChatItem"
         android:fontFamily="serif"

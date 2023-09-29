@@ -1,6 +1,7 @@
 package com.example.beintouch.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ class Chats : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var currentUserID: String
+    private var clicked: Boolean = false
+    private val itemList = mutableListOf<User>()
 
 
     override fun onCreateView(
@@ -40,23 +43,44 @@ class Chats : Fragment() {
         logOut()
         showDialogSearchUser()
         closeAlertDialog()
-
+//        displayTrash()
 
 
     }
 
+
     private fun attachAdapterToRV() {
         chatAdapter = ChatAdapter(object : OnItemClickListener {
-            override fun onItemClick(item: User) {
-                openChatFragment(currentUserID, item.id)
-            }
 
-        })
+            override fun onItemClick(item: List<User>, user: User) {
+                val positions = chatAdapter.getPositions()
+                if(positions.isEmpty()){
+                    openChatFragment(currentUserID, user.id)
+                }
+//                Log.d("Elements", item.toString())
+                Log.d("Elements", positions.toString())
+            }
+        }){
+            isShowed -> showTrash(isShowed)
+        }
+        val elems = chatAdapter.getChatItemsToRemove()
+        Log.d("Elems", elems.toString())
         binding.recyclerViewChats.adapter = chatAdapter
 
         mainViewModel.userList.observe(viewLifecycleOwner) {
             chatAdapter.submitList(it)
         }
+
+    }
+
+
+    private fun showTrash(isShowed: Boolean) {
+        if (isShowed){
+            binding.deleteUser.visibility = View.VISIBLE
+        } else {
+            binding.deleteUser.visibility = View.GONE
+        }
+
     }
 
     override fun onResume() {
@@ -109,11 +133,12 @@ class Chats : Fragment() {
 
     }
 
-    private fun showDialogSearchUser(){
+    private fun showDialogSearchUser() {
         binding.findUser.setOnClickListener {
             dialogSearchUser()
         }
     }
+
     private fun dialogSearchUser() {
         binding.dialogSearchUser.visibility = View.VISIBLE
         binding.overlayView.visibility = View.VISIBLE
@@ -128,7 +153,7 @@ class Chats : Fragment() {
                 binding.foundUserIcon.visibility = View.VISIBLE
             }
         }
-        mainViewModel.foundUser.observe(viewLifecycleOwner){user ->
+        mainViewModel.foundUser.observe(viewLifecycleOwner) { user ->
             if (user != null) {
                 binding.foundUserName.text = user.name
                 binding.buttonToAddUserToChats.setOnClickListener {
@@ -138,6 +163,7 @@ class Chats : Fragment() {
         }
 
     }
+
     private fun closeAlertDialog() {
         binding.buttonToCloseDialog.setOnClickListener {
             binding.dialogSearchUser.visibility = View.GONE

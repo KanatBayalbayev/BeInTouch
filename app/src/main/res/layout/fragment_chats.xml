@@ -29,6 +29,20 @@
             tools:text="Имя пользователя" />
 
         <ImageView
+            android:id="@+id/deleteUser"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@string/buttontofindusers"
+            android:src="@android:drawable/ic_menu_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/findUser"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <ImageView
             android:id="@+id/findUser"
             android:layout_width="40dp"
             android:layout_height="40dp"

@@ -3,9 +3,10 @@ package com.example.beintouch.presentation
 
 data class User @JvmOverloads constructor(
     val id: String = "",
-    val email: String = "" ,
+    val email: String = "",
     val password: String = "",
     val name: String = "",
-    val online: Boolean = false
+    val online: Boolean = false,
+    var isClicked: Boolean = false
 )
 
