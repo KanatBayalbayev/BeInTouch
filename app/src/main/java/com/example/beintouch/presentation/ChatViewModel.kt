@@ -145,6 +145,6 @@ class ChatViewModel(
                 Log.d("ChatViewModel", it.message.toString())
                 Log.d("ChatViewModel", "MessageErrorOfCurrentUser: " + it.message.toString())
             }
-
     }
+
 }

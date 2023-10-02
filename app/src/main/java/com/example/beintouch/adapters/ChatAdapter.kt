@@ -16,24 +16,12 @@ import com.example.beintouch.presentation.User
 
 class ChatAdapter(
     private val listener: OnItemClickListener,
-    private val showTrash: (Boolean) -> Unit
 ) : ListAdapter<User, ChatAdapter.ViewHolder>(Comparator()) {
-    private var isEnabled = false
-    private val itemSelectedList = mutableListOf<Int>()
-    private val chatItemsSelectedList = mutableListOf<User>()
-
-    fun getChatItemsToRemove(): List<User>{
-        return chatItemsSelectedList.toList()
-    }
-    fun getPositions(): List<Int>{
-        return itemSelectedList.toList()
-    }
-
-
-    class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        val backroundForMark = view.findViewById<View>(R.id.backroundForMark)
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val backgroundForMark = view.findViewById<View>(R.id.backroundForMark)
         val sign = view.findViewById<ImageView>(R.id.sign)
         val userNameChatItem = view.findViewById<TextView>(R.id.userNameChatItem)
+        val statusChatItem = view.findViewById<TextView>(R.id.statusChatItem)
 //        private val binding = ChatItemBinding.bind(view)
 
 //        fun bind(user: User) {
@@ -76,43 +64,17 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val chatItem = getItem(position)
         holder.userNameChatItem.text = chatItem.name
+        if (chatItem.online) {
+            holder.statusChatItem.setText(R.string.statusOnline)
+        } else {
+            holder.statusChatItem.setText(R.string.statusOffline)
+        }
+
+
         holder.itemView.setOnClickListener {
 
-            if (itemSelectedList.contains(position)) {
-                itemSelectedList.removeAt(position)
-                chatItemsSelectedList.remove(chatItem)
-                holder.backroundForMark.visibility = View.GONE
-                holder.sign.visibility = View.GONE
-                chatItem.isClicked = false
-                if (itemSelectedList.isEmpty()) {
-                    showTrash(false)
-                    isEnabled = false
-                }
-            } else if (isEnabled) {
-                selectItem(holder, chatItem, position)
-
-            }
-            listener.onItemClick(getChatItemsToRemove(), chatItem)
+            listener.onItemClick(chatItem)
         }
-        holder.itemView.setOnLongClickListener {
-
-//            listener.onItemLongClick(chatItem)
-            selectItem(holder, chatItem, position)
-
-            true
-        }
-    }
-
-    private fun selectItem(holder: ChatAdapter.ViewHolder, chatItem: User?, position: Int) {
-        isEnabled = true
-        itemSelectedList.add(position)
-        if (chatItem != null) {
-            chatItemsSelectedList.add(chatItem)
-        }
-        chatItem?.isClicked = true
-        holder.backroundForMark.visibility = View.VISIBLE
-        holder.sign.visibility = View.VISIBLE
-        showTrash(true)
 
     }
 

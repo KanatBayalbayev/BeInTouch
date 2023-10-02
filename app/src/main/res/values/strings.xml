@@ -32,4 +32,8 @@
     <string name="statusOffline">Offline</string>
     <string name="buttontofindusers">buttonToFindUsers</string>
     <string name="type_user_email">Type user email...</string>
+    <string name="buttontodeletechatitem">buttonToDeleteChatItem</string>
+    <string name="checking_deleting_chat">Do you want to delete this chat?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_the_chat">Delete the chat</string>
 </resources>

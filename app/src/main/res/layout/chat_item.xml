@@ -84,5 +84,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userIcon" />
 
+    <ImageView
+        android:id="@+id/buttonToDeleteChatItem"
+        tools:visibility="visible"
+        android:visibility="gone"
+        android:contentDescription="@string/buttontodeletechatitem"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@android:drawable/ic_delete"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:tint="@color/redOffline" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

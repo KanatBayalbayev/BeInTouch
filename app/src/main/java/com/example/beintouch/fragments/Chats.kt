@@ -23,8 +23,7 @@ class Chats : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var currentUserID: String
-    private var clicked: Boolean = false
-    private val itemList = mutableListOf<User>()
+
 
 
     override fun onCreateView(
@@ -43,28 +42,16 @@ class Chats : Fragment() {
         logOut()
         showDialogSearchUser()
         closeAlertDialog()
-//        displayTrash()
-
-
     }
 
 
     private fun attachAdapterToRV() {
         chatAdapter = ChatAdapter(object : OnItemClickListener {
-
-            override fun onItemClick(item: List<User>, user: User) {
-                val positions = chatAdapter.getPositions()
-                if(positions.isEmpty()){
-                    openChatFragment(currentUserID, user.id)
-                }
-//                Log.d("Elements", item.toString())
-                Log.d("Elements", positions.toString())
+            override fun onItemClick(user: User) {
+               openChatFragment(currentUserID, user.id)
             }
-        }){
-            isShowed -> showTrash(isShowed)
-        }
-        val elems = chatAdapter.getChatItemsToRemove()
-        Log.d("Elems", elems.toString())
+        })
+
         binding.recyclerViewChats.adapter = chatAdapter
 
         mainViewModel.userList.observe(viewLifecycleOwner) {

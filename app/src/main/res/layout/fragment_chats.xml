@@ -7,7 +7,6 @@
     tools:context=".fragments.Chats">
 
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolBar"
         android:layout_width="match_parent"
@@ -30,17 +29,17 @@
 
         <ImageView
             android:id="@+id/deleteUser"
-            android:visibility="gone"
-            tools:visibility="visible"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="10dp"
             android:contentDescription="@string/buttontofindusers"
             android:src="@android:drawable/ic_menu_delete"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/findUser"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white" />
+            app:tint="@color/white"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/findUser"
@@ -78,18 +77,66 @@
 
     <View
         android:id="@+id/overlayView"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="false"
         android:background="#80000000"
+        android:clickable="false"
+        android:visibility="gone"
         tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/dialog_delete_chat"
+        android:visibility="gone"
+        tools:visibility="gone"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/checking_deleting_chat"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/buttonToCancelToDeleteChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/buttonToDeleteChat"
+                android:layout_marginStart="14dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_the_chat"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/dialog_search_user"
         android:layout_width="wrap_content"
-        tools:visibility="visible"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
@@ -98,10 +145,12 @@
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
         android:paddingBottom="20dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone">
 
         <ImageView
             android:id="@+id/buttonToCloseDialog"
@@ -165,44 +214,44 @@
             android:background="@drawable/underline" />
 
         <LinearLayout
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:gravity="center">
 
             <ImageView
                 android:id="@+id/foundUserIcon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:contentDescription="@string/logoicon"
                 android:src="@drawable/usericon"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
             <TextView
                 android:id="@+id/foundUserName"
-                android:textSize="18sp"
-                android:layout_marginStart="12dp"
-                tools:text="Имя"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textSize="18sp"
+                tools:text="Имя" />
 
             <ImageView
                 android:id="@+id/buttonToAddUserToChats"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                tools:visibility="visible"
                 android:layout_marginStart="163dp"
+                android:src="@android:drawable/ic_input_add"
                 android:visibility="gone"
-                android:src="@android:drawable/ic_input_add" />
+                tools:visibility="visible" />
 
         </LinearLayout>
 
 
     </LinearLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -62,6 +62,9 @@ class MainViewModel : ViewModel() {
 
         })
     }
+    fun deleteChat(chatId: String){
+
+    }
 
     fun addFoundUserToChats(foundUser: User) {
         friends.child(auth.currentUser?.uid ?: "").child(foundUser.id).setValue(foundUser)
