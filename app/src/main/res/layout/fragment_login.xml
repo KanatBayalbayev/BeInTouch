@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".fragments.Login">
 
     <View
         android:id="@+id/shape"
+        android:visibility="visible"
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_marginTop="-100dp"
@@ -15,6 +17,19 @@
         android:background="@drawable/circle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/mainIcon"
+        app:lottie_rawRes="@raw/mainlogin"
+        app:lottie_autoPlay="true"
+        android:visibility="gone"
+        app:lottie_loop="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/containerForLogo"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"/>
 
     <LinearLayout
         android:id="@+id/containerForLogo"
@@ -33,6 +48,7 @@
             android:textColor="#5d6ade"
             android:textSize="40sp"
             android:textStyle="bold" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -66,11 +82,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
-            app:boxStrokeColor="#5d6ade"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxStrokeColor="#5d6ade">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/emailInputLogin"
@@ -135,6 +151,19 @@
             android:text="@string/login"
             android:textColor="@color/white"
             android:textSize="18sp" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loaderLoginButton"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:lottie_autoPlay="true"
+            android:layout_marginTop="20dp"
+            app:lottie_loop="true"
+            app:lottie_colorFilter="@color/white"
+            android:background="@drawable/rounded_background"
+            app:lottie_rawRes="@raw/loaderloginbutton"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"/>
 
     </LinearLayout>
 

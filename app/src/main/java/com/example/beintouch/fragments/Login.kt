@@ -36,6 +36,8 @@ class Login : Fragment() {
         launchReset()
         checkUserForLogin()
         observeViewModel()
+        binding.buttonToLogin.visibility = View.VISIBLE
+        binding.loaderLoginButton.visibility = View.GONE
 
     }
 
@@ -47,6 +49,8 @@ class Login : Fragment() {
             ) {
                 Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_LONG).show()
             } else {
+                binding.buttonToLogin.visibility = View.GONE
+                binding.loaderLoginButton.visibility = View.VISIBLE
                 mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
             }
         }
@@ -56,7 +60,11 @@ class Login : Fragment() {
     private fun observeViewModel() {
         mainViewModel.error.observe(viewLifecycleOwner) {
             if (it != null) {
-                Toast.makeText(requireContext(), "Неправильно введен email или password!", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Неправильно введен email или password!",
+                    Toast.LENGTH_LONG
+                ).show()
             }
 
         }

@@ -7,6 +7,8 @@ data class User @JvmOverloads constructor(
     val password: String = "",
     val name: String = "",
     val online: Boolean = false,
-    var isClicked: Boolean = false
+    var userProfileImage: String = "",
+    var selected: Boolean = false,
+    var lastMessage: String = ""
 )
 

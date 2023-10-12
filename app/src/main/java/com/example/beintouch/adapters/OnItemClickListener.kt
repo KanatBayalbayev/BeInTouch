@@ -6,5 +6,7 @@ import com.example.beintouch.presentation.User
 interface OnItemClickListener {
     fun onItemClick( user: User)
 
+    fun onUserFromChatsDelete(user: User)
+
 
 }

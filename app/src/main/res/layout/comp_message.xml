@@ -17,5 +17,26 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <ImageView
+        android:id="@+id/unreadMessage"
+        android:src="@drawable/checkread"
+        android:layout_marginStart="-35dp"
+
+        app:layout_constraintStart_toStartOf="@+id/textMessage"
+        app:layout_constraintBottom_toBottomOf="@+id/textMessage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:contentDescription="@string/unreadmessage" />
+    <ImageView
+        android:id="@+id/readMessage"
+        android:src="@drawable/checkread"
+        android:layout_marginStart="-35dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/textMessage"
+        app:layout_constraintBottom_toBottomOf="@+id/textMessage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:tint="@color/greenOnline"
+        android:contentDescription="@string/readmessage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

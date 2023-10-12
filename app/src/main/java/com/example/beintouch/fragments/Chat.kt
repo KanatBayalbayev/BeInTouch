@@ -24,6 +24,7 @@ class Chat : Fragment() {
 
     private lateinit var currentUserID: String
     private lateinit var companionUserID: String
+    private var isReadMessage: Boolean = false
     private lateinit var currentUser: User
     private lateinit var chatViewModel: ChatViewModel
 
@@ -34,6 +35,7 @@ class Chat : Fragment() {
     ): View {
         currentUserID = arguments?.getString(KEY_CURRENT_USER_ID).toString()
         companionUserID = arguments?.getString(KEY_COMP_USER_ID).toString()
+        isReadMessage = arguments?.getBoolean(KEY_IS_READ_MESSAGE) == true
         val viewModelFactory = ChatViewModelFactory(currentUserID, companionUserID)
         chatViewModel = ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
         binding = ChatBinding.inflate(inflater, container, false)
@@ -43,9 +45,12 @@ class Chat : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         backToChatsFromChat()
-        messagesAdapter = MessagesAdapter(currentUserID)
+        messagesAdapter = MessagesAdapter(currentUserID, companionUserID)
         binding.testRv.layoutManager = LinearLayoutManager(requireContext())
         binding.testRv.adapter = messagesAdapter
+        binding.testRv.scrollToPosition(messagesAdapter.itemCount - 1)
+
+
 
         observeViewModel()
         binding.buttonToSendMessage.setOnClickListener {
@@ -59,7 +64,6 @@ class Chat : Fragment() {
     override fun onResume() {
         super.onResume()
         chatViewModel.setUserOnline(true)
-
     }
 
     override fun onPause() {
@@ -102,7 +106,7 @@ class Chat : Fragment() {
 
             }
         }
-        chatViewModel.currUser.observe(viewLifecycleOwner){
+        chatViewModel.currUser.observe(viewLifecycleOwner) {
             if (it != null) {
                 currentUser = it
             }
@@ -115,13 +119,19 @@ class Chat : Fragment() {
     companion object {
         private const val KEY_CURRENT_USER_ID = "current_user_id"
         private const val KEY_COMP_USER_ID = "comp_user_id"
+        private const val KEY_IS_READ_MESSAGE = "is_read_message"
 
         @JvmStatic
-        fun newInstance(parameterUserID: String, parameterCompUserID: String): Chat {
+        fun newInstance(
+            parameterUserID: String,
+            parameterCompUserID: String,
+            parameterIsRead: Boolean
+        ): Chat {
             val fragment = Chat()
             val args = Bundle()
             args.putString(KEY_CURRENT_USER_ID, parameterUserID)
             args.putString(KEY_COMP_USER_ID, parameterCompUserID)
+            args.putBoolean(KEY_IS_READ_MESSAGE, parameterIsRead)
             fragment.arguments = args
             return fragment
         }

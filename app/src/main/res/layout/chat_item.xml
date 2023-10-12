@@ -8,20 +8,24 @@
     android:padding="12dp"
     app:cardUseCompatPadding="true">
 
+
+
+
     <ImageView
         android:id="@+id/userIcon"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:visibility="visible"
         android:contentDescription="@string/logoicon"
-        android:src="@drawable/usericon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 
     <View
         android:id="@+id/backroundForMark"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="-9dp"
@@ -35,7 +39,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:contentDescription="@string/logoicon"
         android:src="@drawable/check_solid"
         app:layout_constraintTop_toTopOf="@+id/backroundForMark"
@@ -86,7 +90,7 @@
 
     <ImageView
         android:id="@+id/buttonToDeleteChatItem"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:visibility="gone"
         android:contentDescription="@string/buttontodeletechatitem"
         app:layout_constraintTop_toTopOf="parent"

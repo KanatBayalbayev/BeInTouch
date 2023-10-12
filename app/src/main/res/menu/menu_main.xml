@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".presentation.MainActivity">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/menu_item"
+        android:icon="@drawable/options"
         android:title="@string/log_out" />
+    <item
+        android:id="@+id/add_user"
+        android:title="@string/add_user" />
 
 </menu>

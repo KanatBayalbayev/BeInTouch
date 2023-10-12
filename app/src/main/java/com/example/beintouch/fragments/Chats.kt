@@ -1,15 +1,21 @@
 package com.example.beintouch.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.beintouch.R
 import com.example.beintouch.adapters.ChatAdapter
+import com.example.beintouch.adapters.MultiSelectAdapter
 import com.example.beintouch.adapters.OnItemClickListener
 import com.example.beintouch.databinding.FragmentChatsBinding
 import com.example.beintouch.presentation.AuthStateListener
@@ -19,11 +25,14 @@ import com.google.firebase.auth.FirebaseUser
 
 
 class Chats : Fragment() {
+    private var mainMenu: Menu? = null
+
     private lateinit var binding: FragmentChatsBinding
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var currentUserID: String
-
+    private  var userName: String = ""
+    private var isOptionsMenuOpened = false
 
 
     override fun onCreateView(
@@ -32,43 +41,98 @@ class Chats : Fragment() {
     ): View {
         currentUserID = arguments?.getString(KEY_CURRENT_USER_ID).toString()
         binding = FragmentChatsBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.let {
+            (it as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        }
+        setHasOptionsMenu(true)
         attachAdapterToRV()
         observeViewModel()
         logOut()
+
         showDialogSearchUser()
         closeAlertDialog()
+//        showOptionsMenu()
+        binding.trash.setOnClickListener {
+//            val alertDialog = AlertDialog.Builder(requireContext())
+//            alertDialog.setTitle("Delete")
+//            alertDialog.setMessage("Do you want to delete the items")
+//            alertDialog.setPositiveButton("Delete") { _, _ ->
+//                usersAdapter.deleteSelectedItems()
+//                showTrash(false)
+//
+//            }
+//            alertDialog.setNegativeButton("Cancel") { _, _ ->
+//            }
+//            alertDialog.show()
+        }
+//        showTrash()
+
+
     }
 
+//    private fun showTrash(show: Boolean = false) {
+//        if (show) {
+//            binding.trash.visibility = View.VISIBLE
+//        } else {
+//            binding.trash.visibility = View.GONE
+//        }
+//    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item -> {
+                mainViewModel.logout()
+                openLoginFragment()
+                true
+            }
+            R.id.add_user -> {
+                dialogSearchUser()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+
+
+    }
 
     private fun attachAdapterToRV() {
         chatAdapter = ChatAdapter(object : OnItemClickListener {
             override fun onItemClick(user: User) {
-               openChatFragment(currentUserID, user.id)
+                openChatFragment(currentUserID, user.id)
+            }
+
+            override fun onUserFromChatsDelete(user: User) {
+                mainViewModel.deleteChat(currentUserID, user.id)
             }
         })
 
         binding.recyclerViewChats.adapter = chatAdapter
 
+
         mainViewModel.userList.observe(viewLifecycleOwner) {
+
             chatAdapter.submitList(it)
         }
 
-    }
-
-
-    private fun showTrash(isShowed: Boolean) {
-        if (isShowed){
-            binding.deleteUser.visibility = View.VISIBLE
-        } else {
-            binding.deleteUser.visibility = View.GONE
-        }
 
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -94,13 +158,15 @@ class Chats : Fragment() {
             }
         }, currentUserID)
         mainViewModel.userName.observe(viewLifecycleOwner) {
-            binding.userNameAccount.text = it
+//            binding.userNameAccount.text = it
+            binding.toolbar.title = it
+
         }
     }
 
 
     private fun openChatFragment(currentUserId: String, compUserId: String) {
-        val fragment = Chat.newInstance(currentUserId, compUserId)
+        val fragment = Chat.newInstance(currentUserId, compUserId, true)
         val transaction = fragmentManager?.beginTransaction()
         transaction?.replace(R.id.container, fragment)
         transaction?.commit()
@@ -114,6 +180,7 @@ class Chats : Fragment() {
 
     private fun logOut() {
         binding.buttonToLogOut.setOnClickListener {
+
             mainViewModel.logout()
             openLoginFragment()
         }
@@ -126,7 +193,23 @@ class Chats : Fragment() {
         }
     }
 
+    private fun showOptionsMenu() {
+        binding.optionsMenu.setOnClickListener {
+            isOptionsMenuOpened = !isOptionsMenuOpened
+            if (isOptionsMenuOpened) {
+                binding.options.visibility = View.VISIBLE
+            } else {
+                binding.options.visibility = View.GONE
+            }
+
+            Log.d("CHatsFrag", isOptionsMenuOpened.toString())
+        }
+    }
+
+
     private fun dialogSearchUser() {
+        isOptionsMenuOpened = !isOptionsMenuOpened
+        Log.d("CHatsFrag", isOptionsMenuOpened.toString())
         binding.dialogSearchUser.visibility = View.VISIBLE
         binding.overlayView.visibility = View.VISIBLE
         binding.overlayView.isClickable = true
@@ -153,6 +236,8 @@ class Chats : Fragment() {
 
     private fun closeAlertDialog() {
         binding.buttonToCloseDialog.setOnClickListener {
+            isOptionsMenuOpened = !isOptionsMenuOpened
+            Log.d("CHatsFrag", isOptionsMenuOpened.toString())
             binding.dialogSearchUser.visibility = View.GONE
             binding.overlayView.visibility = View.GONE
             binding.overlayView.isClickable = false

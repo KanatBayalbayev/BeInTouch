@@ -2,6 +2,7 @@ package com.example.beintouch.adapters
 
 import android.content.Context
 import android.text.BoringLayout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,32 +14,42 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.beintouch.R
 import com.example.beintouch.databinding.ChatItemBinding
 import com.example.beintouch.presentation.User
+import com.squareup.picasso.Picasso
 
 class ChatAdapter(
     private val listener: OnItemClickListener,
 ) : ListAdapter<User, ChatAdapter.ViewHolder>(Comparator()) {
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val backgroundForMark = view.findViewById<View>(R.id.backroundForMark)
-        val sign = view.findViewById<ImageView>(R.id.sign)
-        val userNameChatItem = view.findViewById<TextView>(R.id.userNameChatItem)
-        val statusChatItem = view.findViewById<TextView>(R.id.statusChatItem)
-//        private val binding = ChatItemBinding.bind(view)
+    val selectedItems = mutableSetOf<String>()
 
-//        fun bind(user: User) {
-//            binding.userNameChatItem.text = user.name
-//            if (user.online){
-//                binding.statusChatItem.setText(R.string.statusOnline)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        //        private val binding = ChatItemBinding.bind(view)
+//        fun bind(user: User) = with(binding) {
+//            userNameChatItem.text = user.name
+//            Picasso.get().load(user.userProfileImage).into(userIcon)
+//            if (user.online) {
+//                statusChatItem.setText(R.string.statusOnline)
 //            } else {
-//                binding.statusChatItem.setText(R.string.statusOffline)
+//                statusChatItem.setText(R.string.statusOffline)
 //            }
-//            if (user.isClicked){
-//                binding.backroundForMark.visibility = View.VISIBLE
-//                binding.sign.visibility = View.VISIBLE
+//            if (user.selected) {
+//                sign.visibility= View.VISIBLE
 //            } else {
-//                binding.backroundForMark.visibility = View.GONE
-//                binding.sign.visibility = View.GONE
+//                sign.visibility= View.GONE
 //            }
 //        }
+        val name = view.findViewById<TextView>(R.id.userNameChatItem)
+        val lastMessage = view.findViewById<TextView>(R.id.lastMessage)
+        val backroundForMark = view.findViewById<View>(R.id.backroundForMark)
+        val buttonToDeleteChatItem = view.findViewById<ImageView>(R.id.buttonToDeleteChatItem)
+        val sign = view.findViewById<ImageView>(R.id.sign)
+        val userIcon = view.findViewById<ImageView>(R.id.userIcon)
+        fun bind(user: User) {
+
+
+        }
+
+
     }
 
     class Comparator : DiffUtil.ItemCallback<User>() {
@@ -63,20 +74,52 @@ class ChatAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val chatItem = getItem(position)
-        holder.userNameChatItem.text = chatItem.name
-        if (chatItem.online) {
-            holder.statusChatItem.setText(R.string.statusOnline)
-        } else {
-            holder.statusChatItem.setText(R.string.statusOffline)
-        }
+        var isEnabled = false
+//        holder.bind(chatItem)
+        holder.bind(chatItem)
+        holder.name.text = chatItem.name
+        holder.lastMessage.text = chatItem.lastMessage
+        Picasso.get().load(chatItem.userProfileImage).into(holder.userIcon)
+        holder.buttonToDeleteChatItem.visibility = View.GONE
 
+        holder.itemView.setOnLongClickListener {
+            isEnabled = true
+            holder.buttonToDeleteChatItem.visibility = View.VISIBLE
+            true
+        }
+        holder.buttonToDeleteChatItem.setOnClickListener {
+            Log.d("Tester", "Deleted: ${chatItem.name}")
+            listener.onUserFromChatsDelete(chatItem)
+        }
 
         holder.itemView.setOnClickListener {
+            if (isEnabled){
+                holder.buttonToDeleteChatItem.visibility = View.GONE
+                isEnabled = false
+            } else {
+                Log.d("Tester", "Перешли в чат: ${isEnabled}")
+                listener.onItemClick(chatItem)
+            }
+            Log.d("Tester", "Deleted: ${isEnabled}")
 
-            listener.onItemClick(chatItem)
         }
 
+//        holder.itemView.setOnClickListener {
+//
+////            listener.onItemClick(chatItem)
+//        }
+//
+//        holder.itemView.setOnLongClickListener {
+//
+//
+////            listener.onItemLongClick(chatItem)
+//            true
+//        }
+
     }
+
+
+
 
 
     override fun onCurrentListChanged(
@@ -84,6 +127,7 @@ class ChatAdapter(
         currentList: MutableList<User>
     ) {
         super.onCurrentListChanged(previousList, currentList)
+
 
     }
 }

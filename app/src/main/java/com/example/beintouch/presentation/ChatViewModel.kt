@@ -22,6 +22,7 @@ class ChatViewModel(
     private val messages = database.getReference("Messages")
     private val friends = database.getReference("Friends")
 
+
     private val _messagesList = MutableLiveData<List<Message>>()
     val messagesList: LiveData<List<Message>>
         get() = _messagesList
@@ -118,6 +119,94 @@ class ChatViewModel(
 
     fun sendMessage(message: Message, foundUser: User){
         friends.child(message.companionID).child(message.senderID).setValue(foundUser)
+        friends
+            .child(message.companionID)
+            .child(message.senderID)
+            .child("lastMessage")
+            .setValue(message.textMessage)
+        friends
+            .child(message.senderID)
+            .child(message.companionID)
+            .child("lastMessage")
+            .setValue(message.textMessage)
+//        friends.child(message.senderID).child(message.companionID).addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//
+//                val user = snapshot.getValue(User::class.java)
+//                Log.d("TestMaker", user?.name + user?.email + user?.lastMessage)
+//                user?.lastMessage = message.textMessage
+//                friends
+//                    .child(message.senderID)
+//                    .child(message.companionID)
+//                    .child("lastMessage")
+//                    .setValue(message.textMessage)
+//
+////                friends.child(message.companionID).child(message.senderID).addValueEventListener(object : ValueEventListener{
+////                    override fun onDataChange(snapshot: DataSnapshot) {
+////                        val compUser = snapshot.getValue(User::class.java)
+////                        compUser?.lastMessage = message.textMessage
+////                        friends
+////                            .child(message.companionID)
+////                            .child(message.senderID)
+////                            .setValue(compUser)
+////                    }
+////
+////                    override fun onCancelled(error: DatabaseError) {
+////                        TODO("Not yet implemented")
+////                    }
+////
+////                })
+////                users.child(currentUserID).addValueEventListener(object : ValueEventListener{
+////                    override fun onDataChange(snapshot: DataSnapshot) {
+////                        val currentUser = snapshot.getValue(User::class.java)
+////                        currentUser?.lastMessage = message.textMessage
+////                        friends
+////                            .child(message.companionID)
+////                            .child(message.senderID)
+////                            .setValue(currentUser)
+////                        _currUser.value = currentUser
+////                        Log.d("ChatViewModel", "CompUser: $user")
+////                    }
+////
+////                    override fun onCancelled(error: DatabaseError) {
+////                        Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
+////                    }
+////
+////                })
+//
+//
+//
+//                Log.d("ChatViewModel", "CompUser: $user")
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
+//            }
+//        })
+
+
+
+
+//        users.child(currentUserID).addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val user = snapshot.getValue(User::class.java)
+//                user?.lastMessage = message.textMessage
+//                friends
+//                    .child(message.senderID)
+//                    .child(message.companionID)
+//                    .setValue(user)
+//                Log.d("ChatViewModel", "CompUser: $user")
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
+//            }
+//        })
+
+
+
+
+
         messages
             .child(message.senderID)
             .child(message.companionID)
@@ -145,6 +234,7 @@ class ChatViewModel(
                 Log.d("ChatViewModel", it.message.toString())
                 Log.d("ChatViewModel", "MessageErrorOfCurrentUser: " + it.message.toString())
             }
+
     }
 
 }

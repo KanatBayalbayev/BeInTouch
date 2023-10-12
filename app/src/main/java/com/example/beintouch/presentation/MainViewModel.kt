@@ -1,5 +1,6 @@
 package com.example.beintouch.presentation
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,13 +12,24 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import java.util.UUID
 
 class MainViewModel : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     private var authStateListener: AuthStateListener? = null
     private val database = Firebase.database
+    private val storage = Firebase.storage
     private val users = database.getReference("Users")
     private val friends = database.getReference("Friends")
+    private val messages = database.getReference("Messages")
+    private var imageUser = ""
+
+    private var previousMessage = ""
+
+    private val _lastMessage = MutableLiveData<String>()
+    val lastMessage: LiveData<String>
+        get() = _lastMessage
 
     private val _foundUser = MutableLiveData<User?>()
     val foundUser: LiveData<User?>
@@ -38,6 +50,11 @@ class MainViewModel : ViewModel() {
     private val _error = MutableLiveData<String>()
     val error: LiveData<String>
         get() = _error
+
+
+    init {
+        getLastMessage("3QMKol7gxFUML6PCJMh7SGnbV1h2", "rjpgDn1FMlWeVGQerVeswU4sL6P2")
+    }
 
     fun findUser(email: String) {
         users.addValueEventListener(object : ValueEventListener {
@@ -62,20 +79,50 @@ class MainViewModel : ViewModel() {
 
         })
     }
-    fun deleteChat(chatId: String){
+
+    fun deleteChat(currentUserId: String, userIdForRemove: String) {
+        val recordPath = "$currentUserId/$userIdForRemove"
+        friends.child(recordPath).removeValue()
+        messages.child(recordPath).removeValue()
+    }
+
+    private fun getLastMessage(currentUserId: String, companionUserId: String) {
+        val query = messages.child(currentUserId).child(companionUserId).orderByKey().limitToLast(1)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (childSnapshot in snapshot.children) {
+                        val lastMessageData: Message? = childSnapshot.getValue(Message::class.java)
+                        if (lastMessageData != null) {
+                            previousMessage = lastMessageData.textMessage
+                            _lastMessage.value = lastMessageData.textMessage
+                            Log.d("LastMessage", "Last message: ${lastMessageData.textMessage}")
+                        }
+                    }
+                } else {
+                    Log.d("LastMessage", "No messages found.")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("LastMessage", "Failed to retrieve last message: ${error.message}")
+            }
+
+        })
 
     }
 
     fun addFoundUserToChats(foundUser: User) {
         friends.child(auth.currentUser?.uid ?: "").child(foundUser.id).setValue(foundUser)
-        friends.addValueEventListener(object : ValueEventListener{
+        friends.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listOfFriends = arrayListOf<User>()
 
-                for (user in snapshot.children){
-                    if (user.key == auth.currentUser?.uid){
-                        for (friend in user.children){
+                for (user in snapshot.children) {
+                    if (user.key == auth.currentUser?.uid) {
+                        for (friend in user.children) {
                             val friendFromDB = friend.getValue(User::class.java)
+
                             if (friendFromDB != null) {
                                 listOfFriends.add(friendFromDB)
                             }
@@ -102,13 +149,14 @@ class MainViewModel : ViewModel() {
                 authStateListener?.onUserUnauthenticated()
             }
         }
-        friends.addValueEventListener(object : ValueEventListener{
+        friends.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listOfFriends = arrayListOf<User>()
-                for (users in snapshot.children){
+                for (users in snapshot.children) {
                     val userKey = users.key
-                    if (userKey == currentUser){
-                        for (friend in users.children){
+                    if (userKey == currentUser) {
+                        for (friend in users.children) {
+
                             val friendFromDB = friend.getValue(User::class.java)
                             if (friendFromDB != null) {
                                 listOfFriends.add(friendFromDB)
@@ -117,17 +165,6 @@ class MainViewModel : ViewModel() {
                     }
                 }
                 _userList.value = listOfFriends
-
-
-//                for (friend in snapshot.children){
-//                    if (auth.currentUser?.uid != friend.key) {
-//                        val friendFromDB = friend.getValue(User::class.java)
-//                        if (friendFromDB != null) {
-//                            listOfFriends.add(friendFromDB)
-//                        }
-//                    }
-//                }
-//                _userList.value = listOfFriends
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -205,30 +242,80 @@ class MainViewModel : ViewModel() {
         email: String,
         password: String,
         full_name: String,
-        isOnline: Boolean
+        isOnline: Boolean,
+        userProfileImage: Uri
     ) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                val userInfo = it.user
+        uploadImageToFirebaseStorage(email, password, full_name, isOnline, userProfileImage)
+//        auth.createUserWithEmailAndPassword(email, password)
+//            .addOnSuccessListener {
+//
+//                val userInfo = it.user
+//
+//                val newUser = userInfo?.let { user ->
+//                    User(
+//                        user.uid,
+//                        email,
+//                        password,
+//                        full_name,
+//                        userProfileImage = imageUser
+//                        )
+//                }
+//                if (newUser != null) {
+//                    users.child(userInfo.uid).setValue(newUser)
+//                }
+//
+//
+//
+//
+//            }
+//            .addOnFailureListener {
+//                _error.value = it.message
+//            }
+    }
 
-                val newUser = userInfo?.let { user ->
-                    User(
-                        user.uid,
-                        email,
-                        password,
-                        full_name,
-                        isOnline
-                    )
+
+    private fun uploadImageToFirebaseStorage(
+        email: String,
+        password: String,
+        full_name: String,
+        isOnline: Boolean,
+        userProfileImage: Uri
+    ) {
+        val filename = UUID.randomUUID().toString()
+        val ref = storage.getReference("/images/$filename")
+        ref.putFile(userProfileImage)
+            .addOnSuccessListener { it ->
+                Log.d("Registration", "Successfully uploaded image: ${it.metadata?.path}")
+                ref.downloadUrl.addOnSuccessListener {
+                    val imageUser = it.toString()
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnSuccessListener {
+                            val userInfo = it.user
+
+                            val newUser = userInfo?.let { user ->
+                                User(
+                                    user.uid,
+                                    email,
+                                    password,
+                                    full_name,
+                                   false,
+                                    imageUser
+                                )
+                            }
+                            if (newUser != null) {
+                                users.child(userInfo.uid).setValue(newUser)
+
+                            }
+
+
+                        }
+                        .addOnFailureListener {
+                            _error.value = it.message
+                        }
+                    Log.d("Registration", "File location: $it")
                 }
-                if (newUser != null) {
-                    users.child(userInfo.uid).setValue(newUser)
-                }
-
-
             }
-            .addOnFailureListener {
-                _error.value = it.message
-            }
+
     }
 
     fun resetPassword(email: String) {
