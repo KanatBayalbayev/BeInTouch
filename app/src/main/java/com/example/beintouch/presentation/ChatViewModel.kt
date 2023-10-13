@@ -125,10 +125,20 @@ class ChatViewModel(
             .child("lastMessage")
             .setValue(message.textMessage)
         friends
+            .child(message.companionID)
+            .child(message.senderID)
+            .child("lastTimeMessageSent")
+            .setValue(message.timestamp)
+        friends
             .child(message.senderID)
             .child(message.companionID)
             .child("lastMessage")
             .setValue(message.textMessage)
+        friends
+            .child(message.senderID)
+            .child(message.companionID)
+            .child("lastTimeMessageSent")
+            .setValue(message.timestamp)
 //        friends.child(message.senderID).child(message.companionID).addValueEventListener(object : ValueEventListener{
 //            override fun onDataChange(snapshot: DataSnapshot) {
 //

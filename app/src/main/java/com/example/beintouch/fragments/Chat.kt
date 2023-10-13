@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +17,7 @@ import com.example.beintouch.presentation.ChatViewModel
 import com.example.beintouch.presentation.ChatViewModelFactory
 import com.example.beintouch.presentation.Message
 import com.example.beintouch.presentation.User
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -52,8 +54,13 @@ class Chat : Fragment() {
         messagesAdapter = MessagesAdapter(currentUserID, companionUserID, isReadMessage)
         binding.testRv.layoutManager = LinearLayoutManager(requireContext())
         binding.testRv.adapter = messagesAdapter
-        binding.testRv.scrollToPosition(messagesAdapter.itemCount - 1)
+//        binding.testRv.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+//                binding.testRv.smoothScrollToPosition(22)
+//
+//        }
+//        binding.testRv.smoothScrollToPosition(messagesAdapter.itemCount - 1)
         Log.d("CheckTester", isReadMessage.toString())
+        Log.d("CountAdapater", messagesAdapter.list.toString())
 
 
 
@@ -93,10 +100,20 @@ class Chat : Fragment() {
 
     private fun observeViewModel() {
         chatViewModel.messagesList.observe(viewLifecycleOwner) {
-            messagesAdapter.submitList(it)
+            binding.testRv.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    binding.testRv.scrollToPosition(it.size - 1)
+                    binding.testRv.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+
+            })
+            messagesAdapter.submitList(it){
+                binding.testRv.smoothScrollToPosition(it.size - 1)
+            }
         }
         chatViewModel.companionUser.observe(viewLifecycleOwner) {
             if (it != null) {
+                Picasso.get().load(it.userProfileImage).into(binding.userIcon)
                 binding.companionUserName.text = it.name
                 if (it.online) {
                     binding.statusCompUserChat.setText(R.string.statusOnline)

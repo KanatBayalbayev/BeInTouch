@@ -20,7 +20,7 @@ class MessagesAdapter(
     private val compID: String,
     private val isReadMessage: Boolean
 ) : ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
-
+    var list = 0
 
     class ViewHolder(view: View, private val viewType: Int) : RecyclerView.ViewHolder(view) {
         private val textViewMessage: TextView = view.findViewById(R.id.textMessage)
@@ -85,6 +85,7 @@ class MessagesAdapter(
         currentList: MutableList<Message>
     ) {
         super.onCurrentListChanged(previousList, currentList)
+
 
     }
 

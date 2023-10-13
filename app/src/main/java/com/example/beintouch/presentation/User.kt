@@ -9,6 +9,7 @@ data class User @JvmOverloads constructor(
     val online: Boolean = false,
     var userProfileImage: String = "",
     var selected: Boolean = false,
-    var lastMessage: String = ""
+    var lastMessage: String = "",
+    var lastTimeMessageSent: String = ""
 )
 

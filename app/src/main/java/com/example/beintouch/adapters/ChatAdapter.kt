@@ -40,6 +40,7 @@ class ChatAdapter(
 //        }
         val name = view.findViewById<TextView>(R.id.userNameChatItem)
         val lastMessage = view.findViewById<TextView>(R.id.lastMessage)
+        val lastTimeMessageSent = view.findViewById<TextView>(R.id.statusChatItem)
         val backroundForMark = view.findViewById<View>(R.id.backroundForMark)
         val buttonToDeleteChatItem = view.findViewById<ImageView>(R.id.buttonToDeleteChatItem)
         val sign = view.findViewById<ImageView>(R.id.sign)
@@ -79,11 +80,14 @@ class ChatAdapter(
         holder.bind(chatItem)
         holder.name.text = chatItem.name
         holder.lastMessage.text = chatItem.lastMessage
+        holder.lastTimeMessageSent.text = chatItem.lastTimeMessageSent
         Picasso.get().load(chatItem.userProfileImage).into(holder.userIcon)
         holder.buttonToDeleteChatItem.visibility = View.GONE
 
         holder.itemView.setOnLongClickListener {
             isEnabled = true
+            selectedItems.add(chatItem.id)
+            holder.lastTimeMessageSent.visibility = View.GONE
             holder.buttonToDeleteChatItem.visibility = View.VISIBLE
             true
         }
@@ -93,7 +97,12 @@ class ChatAdapter(
         }
 
         holder.itemView.setOnClickListener {
+            if (selectedItems.contains(chatItem.id)){
+
+            }
+
             if (isEnabled){
+                holder.lastTimeMessageSent.visibility = View.VISIBLE
                 holder.buttonToDeleteChatItem.visibility = View.GONE
                 isEnabled = false
             } else {
@@ -103,19 +112,6 @@ class ChatAdapter(
             Log.d("Tester", "Deleted: ${isEnabled}")
 
         }
-
-//        holder.itemView.setOnClickListener {
-//
-////            listener.onItemClick(chatItem)
-//        }
-//
-//        holder.itemView.setOnLongClickListener {
-//
-//
-////            listener.onItemLongClick(chatItem)
-//            true
-//        }
-
     }
 
 
