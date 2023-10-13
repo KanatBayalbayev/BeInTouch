@@ -1,6 +1,7 @@
 package com.example.beintouch.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,9 @@ import com.example.beintouch.presentation.ChatViewModel
 import com.example.beintouch.presentation.ChatViewModelFactory
 import com.example.beintouch.presentation.Message
 import com.example.beintouch.presentation.User
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class Chat : Fragment() {
@@ -45,20 +49,28 @@ class Chat : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         backToChatsFromChat()
-        messagesAdapter = MessagesAdapter(currentUserID, companionUserID)
+        messagesAdapter = MessagesAdapter(currentUserID, companionUserID, isReadMessage)
         binding.testRv.layoutManager = LinearLayoutManager(requireContext())
         binding.testRv.adapter = messagesAdapter
         binding.testRv.scrollToPosition(messagesAdapter.itemCount - 1)
+        Log.d("CheckTester", isReadMessage.toString())
+
 
 
 
         observeViewModel()
         binding.buttonToSendMessage.setOnClickListener {
             val textMessage = binding.inputMessageFromUser.text.toString().trim()
-            val message = Message(textMessage, currentUserID, companionUserID)
+            val message = Message(textMessage, currentUserID, companionUserID, getCurrentTime())
             chatViewModel.sendMessage(message, currentUser)
         }
 
+    }
+
+    private fun getCurrentTime(): String {
+        val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val currentTime = Calendar.getInstance().time
+        return dateFormat.format(currentTime)
     }
 
     override fun onResume() {

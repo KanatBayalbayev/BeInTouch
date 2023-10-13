@@ -11,29 +11,29 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beintouch.R
 import com.example.beintouch.presentation.Message
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MessagesAdapter(
     private val userID: String,
     private val compID: String,
-): ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
-
+    private val isReadMessage: Boolean
+) : ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
 
 
     class ViewHolder(view: View, private val viewType: Int) : RecyclerView.ViewHolder(view) {
         private val textViewMessage: TextView = view.findViewById(R.id.textMessage)
-        private val unreadMessage: ImageView = view.findViewById(R.id.unreadMessage)
-        private val readMessage: ImageView = view.findViewById(R.id.readMessage)
+        private val unreadMessage: TextView = view.findViewById(R.id.messageunRead)
+        private val readMessage: TextView = view.findViewById(R.id.messageRead)
+        private val sentMessageTime: TextView = view.findViewById(R.id.sentMessageTime)
 
-        fun bind(message: Message, compID: String) {
-            if (message.companionID == compID){
-                unreadMessage.visibility = View.GONE
-                readMessage.visibility = View.VISIBLE
-            } else {
-                unreadMessage.visibility = View.VISIBLE
-                readMessage.visibility = View.GONE
-            }
-
+        fun bind(message: Message, userid: String, isMessageRead: Boolean) {
+//            val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+//            val formattedTime = dateFormat.format(Date(message.timestamp))
+//            Log.d("TimeCheck", formattedTime)
             textViewMessage.text = message.textMessage
+            sentMessageTime.text = message.timestamp
         }
 
     }
@@ -51,7 +51,7 @@ class MessagesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var layout = 0
-        layout = if (viewType == USER_MESSAGE){
+        layout = if (viewType == USER_MESSAGE) {
             R.layout.user_message
         } else {
             R.layout.comp_message
@@ -67,7 +67,7 @@ class MessagesAdapter(
     override fun getItemViewType(position: Int): Int {
         val message = getItem(position)
         Log.d("MessagesAdapter", "UserID: $userID")
-        return if (message.senderID == userID){
+        return if (message.senderID == userID) {
             USER_MESSAGE
         } else {
             COMPANION_MESSAGE
@@ -76,7 +76,7 @@ class MessagesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = getItem(position)
-        holder.bind(message, compID)
+        holder.bind(message, userID, isReadMessage)
 
     }
 
