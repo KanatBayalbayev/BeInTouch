@@ -11,12 +11,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beintouch.R
+import com.example.beintouch.adapters.MessAdapter
 import com.example.beintouch.adapters.MessagesAdapter
 import com.example.beintouch.databinding.ChatBinding
 import com.example.beintouch.presentation.ChatViewModel
 import com.example.beintouch.presentation.ChatViewModelFactory
 import com.example.beintouch.presentation.Message
 import com.example.beintouch.presentation.User
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -26,13 +35,20 @@ import java.util.Locale
 class Chat : Fragment() {
     private lateinit var binding: ChatBinding
     private lateinit var messagesAdapter: MessagesAdapter
-
+    private lateinit var messAdapter: MessAdapter
+    private val auth: FirebaseAuth = Firebase.auth
+    private lateinit var reference1: DatabaseReference
+    private lateinit var reference2: DatabaseReference
+    private val database = Firebase.database
 
     private lateinit var currentUserID: String
     private lateinit var companionUserID: String
     private var isReadMessage: Boolean = false
     private lateinit var currentUser: User
     private lateinit var chatViewModel: ChatViewModel
+    private lateinit var seenListener1: ValueEventListener
+    private lateinit var seenListener2: ValueEventListener
+    private var listOfMess = listOf<Message>()
 
 
     override fun onCreateView(
@@ -51,23 +67,75 @@ class Chat : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         backToChatsFromChat()
-        messagesAdapter = MessagesAdapter(currentUserID, companionUserID, isReadMessage)
-        binding.testRv.layoutManager = LinearLayoutManager(requireContext())
-        binding.testRv.adapter = messagesAdapter
+        observeViewModel()
+        val data = listOf(
+            Message("hello", currentUserID, companionUserID, "12:05", false),
+            Message("hello2", currentUserID, companionUserID, "12:05", false),
+            Message("hello3", currentUserID, companionUserID, "12:05", false),
+            Message("hello4", companionUserID, currentUserID, "12:05", false),
+            Message("hello5", currentUserID, companionUserID, "12:05", false),
+        )
+        Log.d("Checker", listOfMess.toString())
+//        messagesAdapter = MessagesAdapter(currentUserID, companionUserID, isReadMessage)
+//        messAdapter = MessAdapter(listOfMess, currentUserID, companionUserID)
+//
+//        binding.testRv.layoutManager = LinearLayoutManager(requireContext())
+//        binding.testRv.adapter = messAdapter
 //        chatViewModel.readMessage(companionUserID, currentUserID, true)
 
-        Log.d("CheckTester", isReadMessage.toString())
-        Log.d("CountAdapater", messagesAdapter.list.toString())
 
-
-
-
-        observeViewModel()
+        seenMessage(companionUserID)
         binding.buttonToSendMessage.setOnClickListener {
             val textMessage = binding.inputMessageFromUser.text.toString().trim()
-            val message = Message(textMessage, currentUserID, companionUserID, getCurrentTime())
+            val message =
+                Message(textMessage, currentUserID, companionUserID, getCurrentTime(), false)
             chatViewModel.sendMessage(message, currentUser)
         }
+
+    }
+
+
+    private fun seenMessage(userId: String) {
+        reference1 = database.getReference("Messages").child(companionUserID )
+            .child(auth.currentUser?.uid ?: "")
+        seenListener1 = reference1.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (snap in snapshot.children) {
+                    val chat = snap.getValue(Message::class.java)
+                    Log.d("CheckTest", snap.toString())
+                    if (chat?.companionID == auth.currentUser?.uid && chat?.senderID == companionUserID) {
+                        val hashMap = HashMap<String, Any>()
+                        hashMap["isseen"] = true
+                        snap.ref.updateChildren(hashMap)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("Tester", "it is not working")
+            }
+
+        })
+//        reference2 = database.getReference("Messages").child(companionUserID).child(currentUserID)
+//        seenListener2 = reference2.addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (snap in snapshot.children) {
+//
+//                    val chat = snap.getValue(Message::class.java)
+//                    Log.d("CheckTest", snap.toString())
+//                    if (chat?.companionID == userId && chat.senderID == currentUserID) {
+//                        val hashMap = HashMap<String, Any>()
+//                        hashMap["isseen"] = true
+//                        snap.ref.updateChildren(hashMap)
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("Tester", "it is not working")
+//            }
+//
+//        })
 
     }
 
@@ -84,22 +152,31 @@ class Chat : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        reference1.removeEventListener(seenListener1)
+//        reference2.removeEventListener(seenListener2)
         chatViewModel.setUserOnline(false)
     }
 
     private fun backToChatsFromChat() {
         binding.buttonToBackToChatsFromChat.setOnClickListener {
             requireFragmentManager().beginTransaction()
-                ?.replace(R.id.container, Chats.newInstance(currentUserID))
-                ?.commit()
+                .replace(R.id.container, Chats.newInstance(currentUserID))
+                .commit()
         }
     }
 
     private fun observeViewModel() {
         chatViewModel.messagesList.observe(viewLifecycleOwner) {
-            binding.testRv.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            Log.d("Checker", "InsideOB: $it")
+            messAdapter = MessAdapter(it, currentUserID, companionUserID)
+
+            binding.testRv.layoutManager = LinearLayoutManager(requireContext())
+            binding.testRv.adapter = messAdapter
+            binding.testRv.viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+
                 override fun onGlobalLayout() {
-                    if (it.isEmpty()){
+                    if (it.isEmpty()) {
                         return
                     }
                     binding.testRv.scrollToPosition(it.size - 1)
@@ -107,12 +184,12 @@ class Chat : Fragment() {
                 }
 
             })
-            messagesAdapter.submitList(it){
-                if (it.isEmpty()){
-                    return@submitList
-                }
-//                binding.testRv.smoothScrollToPosition(it.size - 1)
-            }
+//            messagesAdapter.submitList(it){
+//                if (it.isEmpty()){
+//                    return@submitList
+//                }
+////                binding.testRv.smoothScrollToPosition(it.size - 1)
+//            }
         }
         chatViewModel.companionUser.observe(viewLifecycleOwner) {
             if (it != null) {

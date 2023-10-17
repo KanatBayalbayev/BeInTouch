@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -14,6 +16,7 @@ class ChatViewModel(
     private val currentUserID: String,
     private val companionID: String,
 ) : ViewModel() {
+    private val auth: FirebaseAuth = Firebase.auth
     private val database = Firebase.database
     private val users = database.getReference("Users")
     private val userIdToSearch = "Kanatkz07@mail.ru"
@@ -119,27 +122,20 @@ class ChatViewModel(
         users.child(currentUserID).child("online").setValue(isOnline)
     }
 
-    fun readMessage(senderId: String, currentUserID: String, isMessageRead: Boolean) {
+    fun readMessage(currentUserID: String, userId: String) {
         messages
-            .child(senderId)
+            .child(currentUserID)
             .child(currentUserID)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    for (messageDB in snapshot.children) {
-                        val sendID = messageDB.child("senderID").getValue(String::class.java)
-                        if (sendID == senderId) {
-                            val messageKey = messageDB.key
-                            if (messageKey != null) {
-                                messages
-                                    .child(senderId)
-                                    .child(currentUserID)
-                                    .child(messageKey)
-                                    .child("readByRecipient")
-                                    .setValue(isMessageRead)
+                    for (snap in snapshot.children) {
+                        val chat = snap.getValue(Message::class.java)
+                        if (chat?.companionID == auth.currentUser?.uid && chat?.senderID == userId) {
+                            val hashMap = HashMap<String, Any>()
+                            hashMap["isseen"] = true
+                            snap.ref.updateChildren(hashMap)
 
-                            }
                         }
-
                     }
                 }
 
