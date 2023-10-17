@@ -22,7 +22,7 @@ class MessagesAdapter(
 ) : ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
     var list = 0
 
-    class ViewHolder(view: View, private val viewType: Int) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val textViewMessage: TextView = view.findViewById(R.id.textMessage)
         private val unreadMessage: TextView = view.findViewById(R.id.messageunRead)
         private val readMessage: TextView = view.findViewById(R.id.messageRead)
@@ -61,7 +61,7 @@ class MessagesAdapter(
             parent,
             false
         )
-        return ViewHolder(view, viewType)
+        return ViewHolder(view)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -76,6 +76,7 @@ class MessagesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = getItem(position)
+
 
         holder.bind(message, userID, isReadMessage, compID)
 

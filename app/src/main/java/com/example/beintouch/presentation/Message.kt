@@ -5,5 +5,5 @@ data class Message @JvmOverloads constructor(
     val senderID: String = "",
     val companionID: String = "",
     val timestamp: String = "",
-    var isReadByRecipient: Boolean = false
+    var isseen: Boolean = false
 )
