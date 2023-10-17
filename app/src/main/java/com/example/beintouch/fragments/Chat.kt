@@ -54,11 +54,8 @@ class Chat : Fragment() {
         messagesAdapter = MessagesAdapter(currentUserID, companionUserID, isReadMessage)
         binding.testRv.layoutManager = LinearLayoutManager(requireContext())
         binding.testRv.adapter = messagesAdapter
-//        binding.testRv.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-//                binding.testRv.smoothScrollToPosition(22)
-//
-//        }
-//        binding.testRv.smoothScrollToPosition(messagesAdapter.itemCount - 1)
+//        chatViewModel.readMessage(companionUserID, currentUserID, true)
+
         Log.d("CheckTester", isReadMessage.toString())
         Log.d("CountAdapater", messagesAdapter.list.toString())
 
@@ -92,7 +89,7 @@ class Chat : Fragment() {
 
     private fun backToChatsFromChat() {
         binding.buttonToBackToChatsFromChat.setOnClickListener {
-            fragmentManager?.beginTransaction()
+            requireFragmentManager().beginTransaction()
                 ?.replace(R.id.container, Chats.newInstance(currentUserID))
                 ?.commit()
         }
@@ -102,13 +99,19 @@ class Chat : Fragment() {
         chatViewModel.messagesList.observe(viewLifecycleOwner) {
             binding.testRv.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
+                    if (it.isEmpty()){
+                        return
+                    }
                     binding.testRv.scrollToPosition(it.size - 1)
                     binding.testRv.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
 
             })
             messagesAdapter.submitList(it){
-                binding.testRv.smoothScrollToPosition(it.size - 1)
+                if (it.isEmpty()){
+                    return@submitList
+                }
+//                binding.testRv.smoothScrollToPosition(it.size - 1)
             }
         }
         chatViewModel.companionUser.observe(viewLifecycleOwner) {

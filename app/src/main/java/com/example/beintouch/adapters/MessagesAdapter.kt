@@ -27,13 +27,13 @@ class MessagesAdapter(
         private val unreadMessage: TextView = view.findViewById(R.id.messageunRead)
         private val readMessage: TextView = view.findViewById(R.id.messageRead)
         private val sentMessageTime: TextView = view.findViewById(R.id.sentMessageTime)
+        private val messageSeen: TextView = view.findViewById(R.id.messageSeen)
 
-        fun bind(message: Message, userid: String, isMessageRead: Boolean) {
-//            val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-//            val formattedTime = dateFormat.format(Date(message.timestamp))
-//            Log.d("TimeCheck", formattedTime)
+        fun bind(message: Message, userid: String, isMessageRead: Boolean, compid: String) {
             textViewMessage.text = message.textMessage
             sentMessageTime.text = message.timestamp
+
+
         }
 
     }
@@ -76,7 +76,8 @@ class MessagesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = getItem(position)
-        holder.bind(message, userID, isReadMessage)
+
+        holder.bind(message, userID, isReadMessage, compID)
 
     }
 

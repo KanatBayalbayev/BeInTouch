@@ -115,10 +115,13 @@ class Chats : Fragment() {
         chatAdapter = ChatAdapter(object : OnItemClickListener {
             override fun onItemClick(user: User) {
                 openChatFragment(currentUserID, user.id)
+
+
             }
 
             override fun onUserFromChatsDelete(user: User) {
                 mainViewModel.deleteChat(currentUserID, user.id)
+
             }
         })
 
@@ -158,7 +161,6 @@ class Chats : Fragment() {
             }
         }, currentUserID)
         mainViewModel.userName.observe(viewLifecycleOwner) {
-//            binding.userNameAccount.text = it
             binding.toolbar.title = it
 
         }

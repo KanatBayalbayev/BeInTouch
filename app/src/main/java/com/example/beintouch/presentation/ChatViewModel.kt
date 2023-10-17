@@ -13,7 +13,7 @@ import com.google.firebase.ktx.Firebase
 class ChatViewModel(
     private val currentUserID: String,
     private val companionID: String,
-): ViewModel() {
+) : ViewModel() {
     private val database = Firebase.database
     private val users = database.getReference("Users")
     private val userIdToSearch = "Kanatkz07@mail.ru"
@@ -48,10 +48,10 @@ class ChatViewModel(
         findUser("Kanat@gmail.com")
     }
 
-    private fun findUser(email: String){
-        users.addValueEventListener(object : ValueEventListener{
+    private fun findUser(email: String) {
+        users.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for (userDb in snapshot.children){
+                for (userDb in snapshot.children) {
                     val userEmail = userDb.child("email").getValue(String::class.java)
                     if (email == userEmail) {
                         Log.d("FindUserModel", "Found UserEmail: $email")
@@ -69,8 +69,8 @@ class ChatViewModel(
         })
     }
 
-    private fun med(){
-        users.child(companionID).addValueEventListener(object : ValueEventListener{
+    private fun med() {
+        users.child(companionID).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)
                 _companionUser.value = user
@@ -82,7 +82,7 @@ class ChatViewModel(
             }
 
         })
-        users.child(currentUserID).addValueEventListener(object : ValueEventListener{
+        users.child(currentUserID).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)
                 _currUser.value = user
@@ -94,30 +94,64 @@ class ChatViewModel(
             }
 
         })
-        messages.child(currentUserID).child(companionID).addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val listOfMessages = arrayListOf<Message>()
-                for (message in snapshot.children){
-                    val messageFromDB = message.getValue(Message::class.java)
-                    if (messageFromDB != null) {
-                        listOfMessages.add(messageFromDB)
+        messages.child(currentUserID).child(companionID)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val listOfMessages = arrayListOf<Message>()
+                    for (message in snapshot.children) {
+                        val messageFromDB = message.getValue(Message::class.java)
+                        if (messageFromDB != null) {
+                            listOfMessages.add(messageFromDB)
+                        }
                     }
+                    _messagesList.value = listOfMessages
+                    Log.d("ChatViewModel", "Messages: $listOfMessages")
                 }
-                _messagesList.value = listOfMessages
-                Log.d("ChatViewModel", "Messages: $listOfMessages")
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("ChatViewModel", "ErrorOFmessages: " + error.message)
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("ChatViewModel", "ErrorOFmessages: " + error.message)
+                }
+            })
 
     }
-    fun setUserOnline(isOnline: Boolean){
+
+    fun setUserOnline(isOnline: Boolean) {
         users.child(currentUserID).child("online").setValue(isOnline)
     }
 
-    fun sendMessage(message: Message, foundUser: User){
+    fun readMessage(senderId: String, currentUserID: String, isMessageRead: Boolean) {
+        messages
+            .child(senderId)
+            .child(currentUserID)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (messageDB in snapshot.children) {
+                        val sendID = messageDB.child("senderID").getValue(String::class.java)
+                        if (sendID == senderId) {
+                            val messageKey = messageDB.key
+                            if (messageKey != null) {
+                                messages
+                                    .child(senderId)
+                                    .child(currentUserID)
+                                    .child(messageKey)
+                                    .child("readByRecipient")
+                                    .setValue(isMessageRead)
+
+                            }
+                        }
+
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("Tester", error.message)
+                }
+
+            })
+
+    }
+
+    fun sendMessage(message: Message, foundUser: User) {
         friends.child(message.companionID).child(message.senderID).setValue(foundUser)
         friends
             .child(message.companionID)
@@ -139,83 +173,6 @@ class ChatViewModel(
             .child(message.companionID)
             .child("lastTimeMessageSent")
             .setValue(message.timestamp)
-//        friends.child(message.senderID).child(message.companionID).addValueEventListener(object : ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//
-//                val user = snapshot.getValue(User::class.java)
-//                Log.d("TestMaker", user?.name + user?.email + user?.lastMessage)
-//                user?.lastMessage = message.textMessage
-//                friends
-//                    .child(message.senderID)
-//                    .child(message.companionID)
-//                    .child("lastMessage")
-//                    .setValue(message.textMessage)
-//
-////                friends.child(message.companionID).child(message.senderID).addValueEventListener(object : ValueEventListener{
-////                    override fun onDataChange(snapshot: DataSnapshot) {
-////                        val compUser = snapshot.getValue(User::class.java)
-////                        compUser?.lastMessage = message.textMessage
-////                        friends
-////                            .child(message.companionID)
-////                            .child(message.senderID)
-////                            .setValue(compUser)
-////                    }
-////
-////                    override fun onCancelled(error: DatabaseError) {
-////                        TODO("Not yet implemented")
-////                    }
-////
-////                })
-////                users.child(currentUserID).addValueEventListener(object : ValueEventListener{
-////                    override fun onDataChange(snapshot: DataSnapshot) {
-////                        val currentUser = snapshot.getValue(User::class.java)
-////                        currentUser?.lastMessage = message.textMessage
-////                        friends
-////                            .child(message.companionID)
-////                            .child(message.senderID)
-////                            .setValue(currentUser)
-////                        _currUser.value = currentUser
-////                        Log.d("ChatViewModel", "CompUser: $user")
-////                    }
-////
-////                    override fun onCancelled(error: DatabaseError) {
-////                        Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
-////                    }
-////
-////                })
-//
-//
-//
-//                Log.d("ChatViewModel", "CompUser: $user")
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
-//            }
-//        })
-
-
-
-
-//        users.child(currentUserID).addValueEventListener(object : ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val user = snapshot.getValue(User::class.java)
-//                user?.lastMessage = message.textMessage
-//                friends
-//                    .child(message.senderID)
-//                    .child(message.companionID)
-//                    .setValue(user)
-//                Log.d("ChatViewModel", "CompUser: $user")
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.d("ChatViewModel", "ErrorOFcompanionUser: " + error.message)
-//            }
-//        })
-
-
-
-
 
         messages
             .child(message.senderID)
