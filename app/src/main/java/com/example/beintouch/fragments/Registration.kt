@@ -76,15 +76,11 @@ class Registration : Fragment() {
                 Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_LONG).show()
 
             } else {
-
-
                 mainViewModel.signUpWithEmailAndPassword(
                     email,
                     password,
                     userName,
                     )
-
-
             }
         }
     }

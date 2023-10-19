@@ -26,6 +26,7 @@ class MainViewModel : ViewModel() {
     private var imageUser = ""
 
     private var previousMessage = ""
+    private var currentUserID = ""
 
     private val _lastMessage = MutableLiveData<String>()
     val lastMessage: LiveData<String>
@@ -175,7 +176,6 @@ class MainViewModel : ViewModel() {
         authStateListener = listener
         auth.addAuthStateListener {
             val user = it.currentUser
-
             if (user != null) {
                 authStateListener?.onUserAuthenticated(user)
             } else {
@@ -205,6 +205,10 @@ class MainViewModel : ViewModel() {
             }
 
         })
+
+
+
+
 
 
         users.addValueEventListener(object : ValueEventListener {
@@ -262,8 +266,8 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun signInWithEmailAndPassword(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password)
+    fun signInWithEmailAndPassword(userEmail: String, userPassword: String) {
+        auth.signInWithEmailAndPassword(userEmail, userPassword)
             .addOnSuccessListener {
             }
             .addOnFailureListener {
@@ -286,7 +290,7 @@ class MainViewModel : ViewModel() {
                         email,
                         password,
                         full_name,
-                        false,
+                        true,
                     )
                 }
                 if (newUser != null) {
@@ -338,37 +342,37 @@ class MainViewModel : ViewModel() {
         val filename = UUID.randomUUID().toString()
         val ref = storage.getReference("/images/$filename")
         ref.putFile(userProfileImage)
-                .addOnSuccessListener { it ->
-                    Log.d("Registration", "Successfully uploaded image: ${it.metadata?.path}")
-                    ref.downloadUrl.addOnSuccessListener {
-                        val imageUser = it.toString()
-                        auth.createUserWithEmailAndPassword(email, password)
-                            .addOnSuccessListener {
-                                val userInfo = it.user
+            .addOnSuccessListener { it ->
+                Log.d("Registration", "Successfully uploaded image: ${it.metadata?.path}")
+                ref.downloadUrl.addOnSuccessListener {
+                    val imageUser = it.toString()
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnSuccessListener {
+                            val userInfo = it.user
 
-                                val newUser = userInfo?.let { user ->
-                                    User(
-                                        user.uid,
-                                        email,
-                                        password,
-                                        full_name,
-                                        false,
-                                        imageUser
-                                    )
-                                }
-                                if (newUser != null) {
-                                    users.child(userInfo.uid).setValue(newUser)
-
-                                }
-
+                            val newUser = userInfo?.let { user ->
+                                User(
+                                    user.uid,
+                                    email,
+                                    password,
+                                    full_name,
+                                    false,
+                                    imageUser
+                                )
+                            }
+                            if (newUser != null) {
+                                users.child(userInfo.uid).setValue(newUser)
 
                             }
-                            .addOnFailureListener {
-                                _error.value = it.message
-                            }
-                        Log.d("Registration", "File location: $it")
-                    }
+
+
+                        }
+                        .addOnFailureListener {
+                            _error.value = it.message
+                        }
+                    Log.d("Registration", "File location: $it")
                 }
+            }
 
     }
 

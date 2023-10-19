@@ -25,7 +25,7 @@ class ChatViewModel(
     private val users = database.getReference("Users")
     private val userIdToSearch = "Kanatkz07@mail.ru"
     private val query = users.orderByChild("email").equalTo(userIdToSearch)
-
+    var userIsTyping = false
     private val messages = database.getReference("Messages")
     private val friends = database.getReference("Friends")
 
@@ -92,7 +92,13 @@ class ChatViewModel(
         users.child(currentUserID).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)
+
+//                if (user != null) {
+//                    user.isTyping = userIsTyping
+//
+//                }
                 _currUser.value = user
+//                users.child(currentUserID).setValue(user)
                 Log.d("ChatViewModel", "CompUser: $user")
             }
 
@@ -119,11 +125,33 @@ class ChatViewModel(
                     Log.d("ChatViewModel", "ErrorOFmessages: " + error.message)
                 }
             })
+//        textWatch()
 
     }
-    fun changeUserData(currentUserId: String,username: String, userProfileImage: Uri,){
+
+    fun textWatch(isTyping: Boolean) {
+        users.child(currentUserID).child("typing").setValue(isTyping)
+//        users.child(currentUserID).addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val user = snapshot.getValue(User::class.java)
+//                if (user != null) {
+//                    user.isTyping = isTyping
+//                    users.child(currentUserID).setValue(user)
+//                }
+//                Log.d("ChatIsTyping", "User: $user")
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("ChatIsTyping", "Error: $error")
+//            }
+//
+//        })
+    }
+
+    fun changeUserData(currentUserId: String, username: String, userProfileImage: Uri) {
         uploadNewImageToFirebaseStorage(userProfileImage, currentUserId, username)
     }
+
     private fun uploadNewImageToFirebaseStorage(
         userProfileImage: Uri,
         currentUserID: String,
@@ -134,12 +162,12 @@ class ChatViewModel(
         ref.putFile(userProfileImage)
             .addOnSuccessListener {
                 Log.d("ProfileViewModel", "Successfully uploaded image: ${it.metadata?.path}")
-                ref.downloadUrl.addOnSuccessListener{
+                ref.downloadUrl.addOnSuccessListener {
                     val imageUser = it.toString()
                     users.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             for (userDb in snapshot.children) {
-                                val userID= userDb.key
+                                val userID = userDb.key
                                 if (userID != null) {
                                     if (userID == currentUserID) {
                                         val userData = userDb.getValue(User::class.java)

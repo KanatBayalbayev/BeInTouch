@@ -1,6 +1,8 @@
 package com.example.beintouch.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -47,7 +49,6 @@ class Chat : Fragment() {
     private lateinit var seenListener1: ValueEventListener
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,6 +58,10 @@ class Chat : Fragment() {
         isReadMessage = arguments?.getBoolean(KEY_IS_READ_MESSAGE) == true
         val viewModelFactory = ChatViewModelFactory(currentUserID, companionUserID)
         chatViewModel = ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
+
+
+
+
         binding = ChatBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -72,12 +77,37 @@ class Chat : Fragment() {
                 Message(textMessage, currentUserID, companionUserID, getCurrentTime(), false)
             chatViewModel.sendMessage(message, currentUser)
         }
+        textWatcher()
+
 
     }
 
 
+    private fun textWatcher() {
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Не используется
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (count > 0) {
+                    chatViewModel.textWatch(true)
+                } else {
+                    chatViewModel.textWatch(false)
+                }
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Не используется
+            }
+        }
+        binding.inputMessageFromUser.addTextChangedListener(textWatcher)
+    }
+
+
     private fun seenMessage() {
-        reference1 = database.getReference("Messages").child(companionUserID )
+        reference1 = database.getReference("Messages").child(companionUserID)
             .child(auth.currentUser?.uid ?: "")
         seenListener1 = reference1.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -108,12 +138,24 @@ class Chat : Fragment() {
     override fun onResume() {
         super.onResume()
         chatViewModel.setUserOnline(true)
+        chatViewModel.textWatch(false)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        chatViewModel.textWatch(false)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        chatViewModel.textWatch(false)
     }
 
     override fun onPause() {
         super.onPause()
         reference1.removeEventListener(seenListener1)
         chatViewModel.setUserOnline(false)
+        chatViewModel.textWatch(false)
     }
 
     private fun backToChatsFromChat() {
@@ -143,8 +185,8 @@ class Chat : Fragment() {
                 }
 
             })
-            messagesAdapter.submitList(it){
-                if (it.isEmpty()){
+            messagesAdapter.submitList(it) {
+                if (it.isEmpty()) {
                     return@submitList
                 }
 //                binding.testRv.smoothScrollToPosition(it.size - 1)
@@ -152,7 +194,7 @@ class Chat : Fragment() {
         }
         chatViewModel.companionUser.observe(viewLifecycleOwner) {
             if (it != null) {
-                if (it.userProfileImage != ""){
+                if (it.userProfileImage != "") {
                     Picasso.get().load(it.userProfileImage).into(binding.userIconCircleImageView)
                     binding.userIconCircleImageView.visibility = View.VISIBLE
                     binding.userIconImageView.visibility = View.GONE
@@ -178,6 +220,9 @@ class Chat : Fragment() {
                             R.color.redOffline
                         )
                     )
+                }
+                if (it.isTyping){
+                    binding.statusCompUserChat.setText(R.string.isTyping)
                 }
 
             }

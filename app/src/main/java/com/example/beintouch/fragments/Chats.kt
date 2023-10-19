@@ -78,7 +78,7 @@ class Chats : Fragment() {
                 true
             }
             R.id.logout -> {
-//                mainViewModel.logout()
+                mainViewModel.logout()
                 openLoginFragment()
                 true
             }
