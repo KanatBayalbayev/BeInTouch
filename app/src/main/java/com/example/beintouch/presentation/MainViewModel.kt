@@ -9,10 +9,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 class MainViewModel : ViewModel() {
@@ -48,9 +51,13 @@ class MainViewModel : ViewModel() {
     val success: LiveData<Boolean>
         get() = _success
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String>
-        get() = _error
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String>
+        get() = _errorMessage
+
+    private val _isError= MutableLiveData<Boolean>()
+    val isError: LiveData<Boolean>
+        get() = _isError
 
 
     init {
@@ -261,17 +268,31 @@ class MainViewModel : ViewModel() {
 
     fun setUserOnline(isOnline: Boolean) {
         val userId = auth.currentUser?.uid
+        val timestamp = getCurrentTime()
+
         if (userId != null) {
             users.child(userId).child("online").setValue(isOnline)
+            users.child(userId).child("lastTimeVisit").setValue(timestamp)
         }
     }
+
+    private fun getCurrentTime(): String{
+        val currentTime = LocalTime.now()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        return currentTime.format(formatter)
+    }
+
+
+
 
     fun signInWithEmailAndPassword(userEmail: String, userPassword: String) {
         auth.signInWithEmailAndPassword(userEmail, userPassword)
             .addOnSuccessListener {
+                _isError.value = false
             }
             .addOnFailureListener {
-                _error.value = it.message
+                _errorMessage.value = it.message
+                _isError.value = true
             }
     }
 
@@ -301,7 +322,7 @@ class MainViewModel : ViewModel() {
 
             }
             .addOnFailureListener {
-                _error.value = it.message
+                _errorMessage.value = it.message
             }
 //        uploadImageToFirebaseStorage(email, password, full_name, isOnline, userProfileImage)
 //        auth.createUserWithEmailAndPassword(email, password)
@@ -368,7 +389,7 @@ class MainViewModel : ViewModel() {
 
                         }
                         .addOnFailureListener {
-                            _error.value = it.message
+                            _errorMessage.value = it.message
                         }
                     Log.d("Registration", "File location: $it")
                 }
@@ -382,7 +403,7 @@ class MainViewModel : ViewModel() {
                 _success.value = true
             }
             .addOnFailureListener {
-                _error.value = it.message
+                _errorMessage.value = it.message
             }
 
     }

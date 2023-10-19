@@ -96,9 +96,20 @@ class Chats : Fragment() {
 
             }
 
-            override fun onUserFromChatsDelete(user: User) {
-                mainViewModel.deleteChat(currentUserID, user.id)
+            override fun onUserFromChatsDelete(user: User, isDialogShown: Boolean) {
+                if (isDialogShown){
+                    binding.dialogRemoveFriend.visibility = View.VISIBLE
+                } else {
+                    binding.dialogRemoveFriend.visibility = View.GONE
+                }
 
+                binding.buttonToDeleteFriend.setOnClickListener {
+                    mainViewModel.deleteChat(currentUserID, user.id)
+                    binding.dialogRemoveFriend.visibility = View.GONE
+                }
+                binding.buttonToCancelDeletingFriend.setOnClickListener {
+                    binding.dialogRemoveFriend.visibility = View.GONE
+                }
             }
         })
 

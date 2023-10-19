@@ -49,25 +49,43 @@ class Login : Fragment() {
             ) {
                 Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_LONG).show()
             } else {
-                binding.buttonToLogin.visibility = View.GONE
                 binding.loaderLoginButton.visibility = View.VISIBLE
+                binding.buttonToLogin.visibility = View.GONE
+                Toast.makeText(
+                    requireContext(),
+                    "Выполняется вход!!",
+                    Toast.LENGTH_LONG
+                ).show()
                 mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
+
+            }
+            mainViewModel.isError.observe(viewLifecycleOwner){
+                if (it){
+                    binding.buttonToLogin.visibility = View.VISIBLE
+                    binding.loaderLoginButton.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Неправильно введен email или password!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
 
     }
 
     private fun observeViewModel() {
-        mainViewModel.error.observe(viewLifecycleOwner) {
-            if (it != null) {
-                Toast.makeText(
-                    requireContext(),
-                    "Неправильно введен email или password!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-
-        }
+//        mainViewModel.error.observe(viewLifecycleOwner) {
+//            if (it != null) {
+//                Toast.makeText(
+//                    requireContext(),
+//                    "Неправильно введен email или password!",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                binding.loaderLoginButton.visibility = View.GONE
+//            }
+//
+//        }
 
         mainViewModel.setAuthStateListener(object : AuthStateListener {
             override fun onUserAuthenticated(user: FirebaseUser?) {

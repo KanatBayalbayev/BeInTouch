@@ -13,6 +13,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 class ChatViewModel(
@@ -198,7 +200,14 @@ class ChatViewModel(
     }
 
     fun setUserOnline(isOnline: Boolean) {
+        val timestamp = getCurrentTime()
         users.child(currentUserID).child("online").setValue(isOnline)
+        users.child(currentUserID).child("lastTimeVisit").setValue(timestamp)
+    }
+    private fun getCurrentTime(): String{
+        val currentTime = LocalTime.now()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        return currentTime.format(formatter)
     }
 
     fun readMessage(currentUserID: String, userId: String) {

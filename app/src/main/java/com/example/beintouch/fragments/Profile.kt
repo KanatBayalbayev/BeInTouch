@@ -28,7 +28,7 @@ class Profile : Fragment() {
     private val profileViewModel: ProfileViewModel by activityViewModels()
     private lateinit var binding: FragmentProfileBinding
     private lateinit var currentUserID: String
-    private lateinit var selectedImageUri: Uri
+    private var selectedImageUri: Uri? = null
 
 
     override fun onCreateView(
@@ -75,6 +75,8 @@ class Profile : Fragment() {
                 MediaStore.Images.Media.getBitmap(requireContext().contentResolver, it)
             }
             if (bitmap != null) {
+                binding.userIconProfileCircleImageView.visibility = View.VISIBLE
+                binding.userIconProfileImageView.visibility = View.GONE
                 binding.userIconProfileCircleImageView.setImageBitmap(bitmap)
             }
         }
@@ -96,11 +98,11 @@ class Profile : Fragment() {
                 ).show()
                 return@setOnClickListener
             }
+
             profileViewModel.changeUserData(currentUserID, newUserName, selectedImageUri)
-            profileViewModel.logout()
-            fragmentManager?.beginTransaction()
-                ?.replace(R.id.container, Login.newInstance())
-                ?.commit()
+//            fragmentManager?.beginTransaction()
+//                ?.replace(R.id.container, Chats.newInstance(currentUserID))
+//                ?.commit()
         }
     }
 

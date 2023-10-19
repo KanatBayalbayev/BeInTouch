@@ -213,16 +213,24 @@ class Chat : Fragment() {
                         )
                     )
                 } else {
-                    binding.statusCompUserChat.setText(R.string.statusOffline)
+                    val time = it.lastTimeVisit
+                    val formattedString = String.format("Был в сети: %s", time)
+                    binding.statusCompUserChat.text = formattedString
                     binding.statusCompUserChat.setTextColor(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.redOffline
+                            R.color.black
                         )
                     )
                 }
                 if (it.isTyping){
                     binding.statusCompUserChat.setText(R.string.isTyping)
+                    binding.statusCompUserChat.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.black
+                        )
+                    )
                 }
 
             }

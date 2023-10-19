@@ -8,7 +8,7 @@ data class User @JvmOverloads constructor(
     var name: String = "",
     var online: Boolean = false,
     var userProfileImage: String = "",
-    var selected: Boolean = false,
+    var lastTimeVisit: String = "",
     var lastMessage: String = "",
     var lastTimeMessageSent: String = "",
     var isTyping: Boolean = false

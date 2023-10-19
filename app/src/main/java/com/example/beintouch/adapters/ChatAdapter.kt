@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -105,7 +106,8 @@ class ChatAdapter(
         }
         holder.buttonToDeleteChatItem.setOnClickListener {
             Log.d("Tester", "Deleted: ${chatItem.name}")
-            listener.onUserFromChatsDelete(chatItem)
+
+            listener.onUserFromChatsDelete(chatItem, true)
         }
 
         holder.itemView.setOnClickListener {

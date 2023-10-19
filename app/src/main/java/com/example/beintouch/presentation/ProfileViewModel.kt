@@ -51,45 +51,82 @@ class ProfileViewModel: ViewModel() {
         })
     }
 
-    fun changeUserData(currentUserId: String,username: String, userProfileImage: Uri,){
-        uploadNewImageToFirebaseStorage(userProfileImage, currentUserId, username)
+    fun changeUserData(currentUserID: String,userName: String, userProfileImage: Uri? = null){
+        if (userProfileImage != null) {
+            uploadNewImageToFirebaseStorage(userProfileImage, currentUserId = currentUserID, username = userName)
+        } else {
+            uploadNewImageToFirebaseStorage(currentUserId = currentUserID, username = userName)
+
+        }
     }
     private fun uploadNewImageToFirebaseStorage(
-        userProfileImage: Uri,
-        currentUserID: String,
+        userProfileImage: Uri? = null,
+        currentUserId: String,
         username: String
     ) {
         val filename = UUID.randomUUID().toString()
         val ref = storage.getReference("/images/$filename")
-        ref.putFile(userProfileImage)
-            .addOnSuccessListener {
-                Log.d("ProfileViewModel", "Successfully uploaded image: ${it.metadata?.path}")
-                ref.downloadUrl.addOnSuccessListener{
-                    val imageUser = it.toString()
-                    users.addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            for (userDb in snapshot.children) {
-                                val userID= userDb.key
-                                if (userID != null) {
-                                    if (userID == currentUserID) {
-                                        val userData = userDb.getValue(User::class.java)
-                                        if (userData != null) {
-                                            userData.name = username
-                                            userData.userProfileImage = imageUser
-                                            users.child(currentUserID).setValue(userData)
-                                        }
-                                    }
-                                }
-                            }
-                        }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.d("ProfileTest", error.toString())
-                        }
-
-                    })
+        if (userProfileImage != null) {
+            ref.putFile(userProfileImage)
+                .addOnSuccessListener {
+                    Log.d("ProfileViewModel", "Successfully uploaded image: ${it.metadata?.path}")
+                    ref.downloadUrl.addOnSuccessListener{
+                        val imageUser = it.toString()
+                        Log.d("ProfileViewModel", "ReferenceImage: $it")
+                        users.child(currentUserId).child("name").setValue(username)
+                        users.child(currentUserId).child("userProfileImage").setValue(imageUser)
+//                        users.addValueEventListener(object : ValueEventListener {
+//                            override fun onDataChange(snapshot: DataSnapshot) {
+//                                for (userDb in snapshot.children) {
+//                                    val userID= userDb.key
+//                                    if (userID != null) {
+//                                        if (userID == currentUserId) {
+//                                            val userData = userDb.getValue(User::class.java)
+//                                            Log.d("ProfileViewModel", "CurrentUser: $userData")
+//                                            if (userData != null) {
+//                                                userData.name = username
+//                                                userData.userProfileImage = imageUser
+//                                                users.child(currentUserId).setValue(userData)
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            override fun onCancelled(error: DatabaseError) {
+//                                Log.d("ProfileTest", error.toString())
+//                            }
+//
+//                        })
+                    }
                 }
-            }
+        } else {
+            users.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    users.child(currentUserId).child("name").setValue(username)
+//                    for (userDb in snapshot.children) {
+//                        val userID= userDb.key
+//                        if (userID != null) {
+//                            if (userID == currentUserId) {
+//                                val userData = userDb.getValue(User::class.java)
+//                                Log.d("ProfileViewModel", "CurrentUser: $userData")
+//                                if (userData != null) {
+//                                    userData.name = username
+//                                    users.child(currentUserId).setValue(userData)
+//                                }
+//                            }
+//                        }
+//                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("ProfileTest", error.toString())
+                }
+
+            })
+
+        }
     }
 
 
