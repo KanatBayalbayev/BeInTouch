@@ -35,10 +35,8 @@ import java.util.Locale
 class Chat : Fragment() {
     private lateinit var binding: ChatBinding
     private lateinit var messagesAdapter: MessagesAdapter
-    private lateinit var messAdapter: MessAdapter
     private val auth: FirebaseAuth = Firebase.auth
     private lateinit var reference1: DatabaseReference
-    private lateinit var reference2: DatabaseReference
     private val database = Firebase.database
 
     private lateinit var currentUserID: String
@@ -47,8 +45,7 @@ class Chat : Fragment() {
     private lateinit var currentUser: User
     private lateinit var chatViewModel: ChatViewModel
     private lateinit var seenListener1: ValueEventListener
-    private lateinit var seenListener2: ValueEventListener
-    private var listOfMess = listOf<Message>()
+
 
 
     override fun onCreateView(
@@ -68,23 +65,7 @@ class Chat : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         backToChatsFromChat()
         observeViewModel()
-        val data = listOf(
-            Message("hello", currentUserID, companionUserID, "12:05", false),
-            Message("hello2", currentUserID, companionUserID, "12:05", false),
-            Message("hello3", currentUserID, companionUserID, "12:05", false),
-            Message("hello4", companionUserID, currentUserID, "12:05", false),
-            Message("hello5", currentUserID, companionUserID, "12:05", false),
-        )
-        Log.d("Checker", listOfMess.toString())
-//        messagesAdapter = MessagesAdapter(currentUserID, companionUserID, isReadMessage)
-//        messAdapter = MessAdapter(listOfMess, currentUserID, companionUserID)
-//
-//        binding.testRv.layoutManager = LinearLayoutManager(requireContext())
-//        binding.testRv.adapter = messAdapter
-//        chatViewModel.readMessage(companionUserID, currentUserID, true)
-
-
-        seenMessage(companionUserID)
+        seenMessage()
         binding.buttonToSendMessage.setOnClickListener {
             val textMessage = binding.inputMessageFromUser.text.toString().trim()
             val message =
@@ -95,7 +76,7 @@ class Chat : Fragment() {
     }
 
 
-    private fun seenMessage(userId: String) {
+    private fun seenMessage() {
         reference1 = database.getReference("Messages").child(companionUserID )
             .child(auth.currentUser?.uid ?: "")
         seenListener1 = reference1.addValueEventListener(object : ValueEventListener {
@@ -116,27 +97,6 @@ class Chat : Fragment() {
             }
 
         })
-//        reference2 = database.getReference("Messages").child(companionUserID).child(currentUserID)
-//        seenListener2 = reference2.addValueEventListener(object : ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                for (snap in snapshot.children) {
-//
-//                    val chat = snap.getValue(Message::class.java)
-//                    Log.d("CheckTest", snap.toString())
-//                    if (chat?.companionID == userId && chat.senderID == currentUserID) {
-//                        val hashMap = HashMap<String, Any>()
-//                        hashMap["isseen"] = true
-//                        snap.ref.updateChildren(hashMap)
-//                    }
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.d("Tester", "it is not working")
-//            }
-//
-//        })
-
     }
 
     private fun getCurrentTime(): String {
@@ -153,7 +113,6 @@ class Chat : Fragment() {
     override fun onPause() {
         super.onPause()
         reference1.removeEventListener(seenListener1)
-//        reference2.removeEventListener(seenListener2)
         chatViewModel.setUserOnline(false)
     }
 
@@ -167,11 +126,11 @@ class Chat : Fragment() {
 
     private fun observeViewModel() {
         chatViewModel.messagesList.observe(viewLifecycleOwner) {
-            Log.d("Checker", "InsideOB: $it")
-            messAdapter = MessAdapter(it, currentUserID, companionUserID)
 
+            messagesAdapter = MessagesAdapter(currentUserID, companionUserID)
             binding.testRv.layoutManager = LinearLayoutManager(requireContext())
-            binding.testRv.adapter = messAdapter
+            binding.testRv.adapter = messagesAdapter
+
             binding.testRv.viewTreeObserver.addOnGlobalLayoutListener(object :
                 ViewTreeObserver.OnGlobalLayoutListener {
 
@@ -184,16 +143,24 @@ class Chat : Fragment() {
                 }
 
             })
-//            messagesAdapter.submitList(it){
-//                if (it.isEmpty()){
-//                    return@submitList
-//                }
-////                binding.testRv.smoothScrollToPosition(it.size - 1)
-//            }
+            messagesAdapter.submitList(it){
+                if (it.isEmpty()){
+                    return@submitList
+                }
+//                binding.testRv.smoothScrollToPosition(it.size - 1)
+            }
         }
         chatViewModel.companionUser.observe(viewLifecycleOwner) {
             if (it != null) {
-                Picasso.get().load(it.userProfileImage).into(binding.userIcon)
+                if (it.userProfileImage != ""){
+                    Picasso.get().load(it.userProfileImage).into(binding.userIconCircleImageView)
+                    binding.userIconCircleImageView.visibility = View.VISIBLE
+                    binding.userIconImageView.visibility = View.GONE
+                } else {
+                    binding.userIconCircleImageView.visibility = View.GONE
+                    binding.userIconImageView.visibility = View.VISIBLE
+                }
+
                 binding.companionUserName.text = it.name
                 if (it.online) {
                     binding.statusCompUserChat.setText(R.string.statusOnline)

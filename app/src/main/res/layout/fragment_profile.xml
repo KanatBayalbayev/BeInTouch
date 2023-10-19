@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".fragments.Profile">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topContainer"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        >
+
+        <ImageView
+            android:id="@+id/buttonToBackToChatsFromProfile"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:contentDescription="@string/backtoaccounticon"
+            android:src="@drawable/left_arrow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/profileSection"
+            android:fontFamily="serif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/buttonToBackToChatsFromProfile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Profile" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/underline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/companionUserName" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="110dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userIconProfileCircleImageView"
+            app:civ_border_width="1dp"
+            android:visibility="gone"
+            app:civ_border_color="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+        <ImageView
+            android:id="@+id/userIconProfileImageView"
+            app:civ_border_width="1dp"
+            android:visibility="visible"
+            android:src="@drawable/usericon"
+            app:civ_border_color="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+
+
+        <View
+            android:id="@+id/backgroundPhotoUpload"
+            android:background="@drawable/round_green_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+        <ImageView
+            android:id="@+id/buttonUserIconProfileUpload"
+            android:src="@drawable/photoupload"
+            app:layout_constraintStart_toStartOf="@+id/backgroundPhotoUpload"
+            app:layout_constraintTop_toTopOf="@+id/backgroundPhotoUpload"
+            app:layout_constraintEnd_toEndOf="@+id/backgroundPhotoUpload"
+            app:layout_constraintBottom_toBottomOf="@+id/backgroundPhotoUpload"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:tint="@color/white" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/userNameIcon"
+            android:src="@drawable/usernameicon"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:tint="@color/black" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/usernameContainer"
+            app:layout_constraintStart_toEndOf="@+id/userNameIcon"
+            app:layout_constraintTop_toTopOf="parent"
+
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/buttonToSaveNewData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_background"
+        android:gravity="center"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:text="@string/saveDataProfile"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+
+
+
+</LinearLayout>

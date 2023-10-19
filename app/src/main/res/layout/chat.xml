@@ -29,9 +29,21 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/black" />
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/userIcon"
+            android:id="@+id/userIconCircleImageView"
             app:civ_border_width="1dp"
             android:layout_marginStart="4dp"
+            android:visibility="gone"
+            app:civ_border_color="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonToBackToChatsFromChat"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+        <ImageView
+            android:id="@+id/userIconImageView"
+            app:civ_border_width="1dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/usericon"
             app:civ_border_color="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/buttonToBackToChatsFromChat"
@@ -44,10 +56,10 @@
             android:fontFamily="serif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="115dp"
             android:layout_marginTop="10dp"
             android:textSize="20sp"
-            app:layout_constraintStart_toEndOf="@+id/userIcon"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Kanat Bayalbayev" />
 
@@ -56,10 +68,10 @@
             android:fontFamily="serif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginEnd="238dp"
             android:textColor="#008000"
             android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/userIcon"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/companionUserName"
             tools:text="Online" />
 
@@ -72,7 +84,7 @@
             android:layout_marginEnd="15dp"
             android:background="@drawable/underline"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userIcon" />
+            app:layout_constraintTop_toBottomOf="@+id/statusCompUserChat" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

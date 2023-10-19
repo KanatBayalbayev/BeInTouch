@@ -40,4 +40,8 @@
     <string name="add_user">Add User</string>
     <string name="unreadmessage">unreadmessage</string>
     <string name="readmessage">readmessage</string>
+    <string name="saveDataProfile">SAVE</string>
+    <string name="profile">Profile</string>
+    <string name="your_current_password">Your current Password</string>
+    <string name="enter_your_new_password">Enter your new password</string>
 </resources>

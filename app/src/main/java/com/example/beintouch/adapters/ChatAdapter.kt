@@ -44,7 +44,8 @@ class ChatAdapter(
         val backroundForMark = view.findViewById<View>(R.id.backroundForMark)
         val buttonToDeleteChatItem = view.findViewById<ImageView>(R.id.buttonToDeleteChatItem)
         val sign = view.findViewById<ImageView>(R.id.sign)
-        val userIcon = view.findViewById<ImageView>(R.id.userIcon)
+        val userIconCircleImageView = view.findViewById<ImageView>(R.id.userIconCircleImageView)
+        val userIconImageView = view.findViewById<ImageView>(R.id.userIconImageView)
         fun bind(user: User) {
 
 
@@ -81,7 +82,18 @@ class ChatAdapter(
         holder.name.text = chatItem.name
         holder.lastMessage.text = chatItem.lastMessage
         holder.lastTimeMessageSent.text = chatItem.lastTimeMessageSent
-        Picasso.get().load(chatItem.userProfileImage).into(holder.userIcon)
+
+        if (chatItem.userProfileImage != ""){
+            Picasso.get().load(chatItem.userProfileImage).into(holder.userIconCircleImageView)
+            holder.userIconCircleImageView.visibility = View.VISIBLE
+            holder.userIconImageView.visibility = View.GONE
+        } else {
+            holder.userIconCircleImageView.visibility = View.GONE
+            holder.userIconImageView.visibility = View.VISIBLE
+        }
+
+
+
         holder.buttonToDeleteChatItem.visibility = View.GONE
 
         holder.itemView.setOnLongClickListener {
@@ -97,11 +109,11 @@ class ChatAdapter(
         }
 
         holder.itemView.setOnClickListener {
-            if (selectedItems.contains(chatItem.id)){
+            if (selectedItems.contains(chatItem.id)) {
 
             }
 
-            if (isEnabled){
+            if (isEnabled) {
                 holder.lastTimeMessageSent.visibility = View.VISIBLE
                 holder.buttonToDeleteChatItem.visibility = View.GONE
                 isEnabled = false
@@ -113,9 +125,6 @@ class ChatAdapter(
 
         }
     }
-
-
-
 
 
     override fun onCurrentListChanged(

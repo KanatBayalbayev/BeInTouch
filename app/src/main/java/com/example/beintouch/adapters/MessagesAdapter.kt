@@ -18,23 +18,22 @@ import java.util.Locale
 class MessagesAdapter(
     private val userID: String,
     private val compID: String,
-    private val isReadMessage: Boolean
 ) : ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
     var list = 0
 
+
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val textViewMessage: TextView = view.findViewById(R.id.textMessage)
-        private val unreadMessage: TextView = view.findViewById(R.id.messageunRead)
-        private val readMessage: TextView = view.findViewById(R.id.messageRead)
-        private val sentMessageTime: TextView = view.findViewById(R.id.sentMessageTime)
-        private val messageSeen: TextView = view.findViewById(R.id.messageSeen)
+         val textViewMessage: TextView = view.findViewById(R.id.textMessage)
+         val unreadMessage: TextView = view.findViewById(R.id.messageunRead)
+         val readMessage: TextView = view.findViewById(R.id.messageRead)
+         val sentMessageTime: TextView = view.findViewById(R.id.sentMessageTime)
+         val messageSeen: TextView = view.findViewById(R.id.messageSeen)
 
-        fun bind(message: Message, userid: String, isMessageRead: Boolean, compid: String) {
-            textViewMessage.text = message.textMessage
-            sentMessageTime.text = message.timestamp
-
-
-        }
+//        fun bind(message: Message, userid: String, isMessageRead: Boolean, compid: String) {
+//            textViewMessage.text = message.textMessage
+//            sentMessageTime.text = message.timestamp
+//        }
 
     }
 
@@ -76,9 +75,20 @@ class MessagesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = getItem(position)
-
-
-        holder.bind(message, userID, isReadMessage, compID)
+//        holder.bind(message, userID, isReadMessage, compID)
+        holder.textViewMessage.text = message.textMessage
+        holder.sentMessageTime.text = message.timestamp
+        if (position == currentList.size - 1){
+            if (message.senderID == userID){
+                if (message.isseen){
+                    holder.messageSeen.text = "Seen"
+                } else {
+                    holder.messageSeen.text = "Delivered"
+                }
+            }
+        } else {
+            holder.messageSeen.visibility = View.GONE
+        }
 
     }
 

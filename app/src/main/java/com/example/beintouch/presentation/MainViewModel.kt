@@ -274,11 +274,32 @@ class MainViewModel : ViewModel() {
     fun signUpWithEmailAndPassword(
         email: String,
         password: String,
-        full_name: String,
-        isOnline: Boolean,
-        userProfileImage: Uri
+        full_name: String
     ) {
-        uploadImageToFirebaseStorage(email, password, full_name, isOnline, userProfileImage)
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                val userInfo = it.user
+
+                val newUser = userInfo?.let { user ->
+                    User(
+                        user.uid,
+                        email,
+                        password,
+                        full_name,
+                        false,
+                    )
+                }
+                if (newUser != null) {
+                    users.child(userInfo.uid).setValue(newUser)
+
+                }
+
+
+            }
+            .addOnFailureListener {
+                _error.value = it.message
+            }
+//        uploadImageToFirebaseStorage(email, password, full_name, isOnline, userProfileImage)
 //        auth.createUserWithEmailAndPassword(email, password)
 //            .addOnSuccessListener {
 //
@@ -317,37 +338,37 @@ class MainViewModel : ViewModel() {
         val filename = UUID.randomUUID().toString()
         val ref = storage.getReference("/images/$filename")
         ref.putFile(userProfileImage)
-            .addOnSuccessListener { it ->
-                Log.d("Registration", "Successfully uploaded image: ${it.metadata?.path}")
-                ref.downloadUrl.addOnSuccessListener {
-                    val imageUser = it.toString()
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnSuccessListener {
-                            val userInfo = it.user
+                .addOnSuccessListener { it ->
+                    Log.d("Registration", "Successfully uploaded image: ${it.metadata?.path}")
+                    ref.downloadUrl.addOnSuccessListener {
+                        val imageUser = it.toString()
+                        auth.createUserWithEmailAndPassword(email, password)
+                            .addOnSuccessListener {
+                                val userInfo = it.user
 
-                            val newUser = userInfo?.let { user ->
-                                User(
-                                    user.uid,
-                                    email,
-                                    password,
-                                    full_name,
-                                   false,
-                                    imageUser
-                                )
+                                val newUser = userInfo?.let { user ->
+                                    User(
+                                        user.uid,
+                                        email,
+                                        password,
+                                        full_name,
+                                        false,
+                                        imageUser
+                                    )
+                                }
+                                if (newUser != null) {
+                                    users.child(userInfo.uid).setValue(newUser)
+
+                                }
+
+
                             }
-                            if (newUser != null) {
-                                users.child(userInfo.uid).setValue(newUser)
-
+                            .addOnFailureListener {
+                                _error.value = it.message
                             }
-
-
-                        }
-                        .addOnFailureListener {
-                            _error.value = it.message
-                        }
-                    Log.d("Registration", "File location: $it")
+                        Log.d("Registration", "File location: $it")
+                    }
                 }
-            }
 
     }
 

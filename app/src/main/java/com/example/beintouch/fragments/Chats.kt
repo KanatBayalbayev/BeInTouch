@@ -1,6 +1,5 @@
 package com.example.beintouch.fragments
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.beintouch.R
 import com.example.beintouch.adapters.ChatAdapter
-import com.example.beintouch.adapters.MultiSelectAdapter
 import com.example.beintouch.adapters.OnItemClickListener
 import com.example.beintouch.databinding.FragmentChatsBinding
 import com.example.beintouch.presentation.AuthStateListener
@@ -58,32 +56,8 @@ class Chats : Fragment() {
 
         showDialogSearchUser()
         closeAlertDialog()
-//        showOptionsMenu()
-        binding.trash.setOnClickListener {
-//            val alertDialog = AlertDialog.Builder(requireContext())
-//            alertDialog.setTitle("Delete")
-//            alertDialog.setMessage("Do you want to delete the items")
-//            alertDialog.setPositiveButton("Delete") { _, _ ->
-//                usersAdapter.deleteSelectedItems()
-//                showTrash(false)
-//
-//            }
-//            alertDialog.setNegativeButton("Cancel") { _, _ ->
-//            }
-//            alertDialog.show()
-        }
-//        showTrash()
-
-
     }
 
-//    private fun showTrash(show: Boolean = false) {
-//        if (show) {
-//            binding.trash.visibility = View.VISIBLE
-//        } else {
-//            binding.trash.visibility = View.GONE
-//        }
-//    }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -95,16 +69,19 @@ class Chats : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_item -> {
-                mainViewModel.logout()
-                openLoginFragment()
+            R.id.profile -> {
+                openProfileFragment(currentUserID)
                 true
             }
             R.id.add_user -> {
                 dialogSearchUser()
                 true
             }
-
+            R.id.logout -> {
+//                mainViewModel.logout()
+                openLoginFragment()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
 
@@ -129,11 +106,8 @@ class Chats : Fragment() {
 
 
         mainViewModel.userList.observe(viewLifecycleOwner) {
-
             chatAdapter.submitList(it)
         }
-
-
     }
 
 
@@ -178,6 +152,12 @@ class Chats : Fragment() {
         fragmentManager?.beginTransaction()
             ?.replace(R.id.container, Login.newInstance())
             ?.commit()
+    }
+    private fun openProfileFragment(currentUserId: String) {
+        val fragment = Profile.newInstance(currentUserId)
+        val transaction = fragmentManager?.beginTransaction()
+        transaction?.replace(R.id.container, fragment)
+        transaction?.commit()
     }
 
     private fun logOut() {

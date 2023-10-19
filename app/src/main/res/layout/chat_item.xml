@@ -10,8 +10,20 @@
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/userIcon"
+        android:id="@+id/userIconCircleImageView"
         app:civ_border_width="1dp"
+        android:visibility="gone"
+        app:civ_border_color="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+    <ImageView
+        android:id="@+id/userIconImageView"
+        app:civ_border_width="1dp"
+        android:src="@drawable/usericon"
+        android:visibility="visible"
         app:civ_border_color="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,8 +42,8 @@
         android:layout_marginEnd="-9dp"
         android:layout_marginBottom="-9dp"
         android:background="@drawable/circle_button_to_mark_message"
-        app:layout_constraintBottom_toBottomOf="@+id/userIcon"
-        app:layout_constraintEnd_toEndOf="@+id/userIcon" />
+        app:layout_constraintBottom_toBottomOf="@+id/userIconImageView"
+        app:layout_constraintEnd_toEndOf="@+id/userIconImageView" />
 
     <ImageView
         android:id="@+id/sign"
@@ -52,9 +64,9 @@
         android:fontFamily="serif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="70dp"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/userIcon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Kanat Bayalbayev" />
 
@@ -62,10 +74,10 @@
         android:id="@+id/lastMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="70dp"
         android:alpha="0.7"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/userIcon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userNameChatItem"
         tools:text="There's something in the chat" />
 
@@ -78,14 +90,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="12:45" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="60dp"
-        android:background="@drawable/underline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userIcon" />
+
 
     <ImageView
         android:id="@+id/buttonToDeleteChatItem"
@@ -98,8 +103,13 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         app:tint="@color/redOffline" />
-
-
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginStart="60dp"
+        android:background="@drawable/underline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userNameChatItem" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
