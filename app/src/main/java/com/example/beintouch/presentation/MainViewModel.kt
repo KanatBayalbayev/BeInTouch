@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -13,6 +14,7 @@ import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.ktx.storage
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -62,6 +64,20 @@ class MainViewModel : ViewModel() {
 
     init {
         getLastMessage("3QMKol7gxFUML6PCJMh7SGnbV1h2", "rjpgDn1FMlWeVGQerVeswU4sL6P2")
+        getTokenFCM()
+    }
+
+    fun getTokenFCM(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("MainView", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            Log.d("TokenFCM", "Token: $token")
+        })
     }
 
     fun readMessage(senderId: String, currentUserID: String, isMessageRead: Boolean) {
@@ -235,6 +251,8 @@ class MainViewModel : ViewModel() {
                         if (userFromDB != null) {
                             _userName.value = userFromDB.name
                         }
+                        val userId = auth.currentUser!!.uid
+                        FirebaseMessaging.getInstance().subscribeToTopic("/topics/$userId")
                     }
                 }
 //                _userList.value = listOfUsers

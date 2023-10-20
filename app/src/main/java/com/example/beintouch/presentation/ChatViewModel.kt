@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.beintouch.R
+import com.example.beintouch.fragments.Data
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -30,6 +32,8 @@ class ChatViewModel(
     var userIsTyping = false
     private val messages = database.getReference("Messages")
     private val friends = database.getReference("Friends")
+    private val tokens = database.getReference("Tokens")
+    var notify = false
 
 
     private val _messagesList = MutableLiveData<List<Message>>()
@@ -204,7 +208,8 @@ class ChatViewModel(
         users.child(currentUserID).child("online").setValue(isOnline)
         users.child(currentUserID).child("lastTimeVisit").setValue(timestamp)
     }
-    private fun getCurrentTime(): String{
+
+    private fun getCurrentTime(): String {
         val currentTime = LocalTime.now()
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         return currentTime.format(formatter)
@@ -265,6 +270,8 @@ class ChatViewModel(
             .setValue(message)
             .addOnSuccessListener {
                 Log.d("ChatViewModel", "MessageOfUser: $it")
+
+
                 messages
                     .child(message.companionID)
                     .child(message.senderID)
@@ -287,5 +294,6 @@ class ChatViewModel(
             }
 
     }
+
 
 }

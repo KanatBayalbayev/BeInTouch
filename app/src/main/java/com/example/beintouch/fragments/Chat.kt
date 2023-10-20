@@ -1,5 +1,10 @@
 package com.example.beintouch.fragments
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,12 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beintouch.R
-import com.example.beintouch.adapters.MessAdapter
 import com.example.beintouch.adapters.MessagesAdapter
 import com.example.beintouch.databinding.ChatBinding
 import com.example.beintouch.presentation.ChatViewModel
@@ -32,7 +37,6 @@ import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
 
 class Chat : Fragment() {
     private lateinit var binding: ChatBinding
@@ -76,10 +80,45 @@ class Chat : Fragment() {
             val message =
                 Message(textMessage, currentUserID, companionUserID, getCurrentTime(), false)
             chatViewModel.sendMessage(message, currentUser)
+//            showNotification()
+
         }
         textWatcher()
 
 
+    }
+
+    private fun showNotification() {
+        val notificationManager =
+            requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channelId = "channel_id"
+        val notification = NotificationCompat.Builder(requireContext(), channelId)
+            .setContentTitle("Заголовок уведомления")
+            .setContentText("Текст уведомления")
+            .setSmallIcon(R.drawable.usericon)
+            .setContentIntent(getPendingIntent())
+            .build()
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Название канала",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        notificationManager.notify(1, notification)
+    }
+
+    private fun getPendingIntent(): PendingIntent {
+        val intent = Intent(requireContext(), Chat::class.java)
+        return PendingIntent.getActivity(
+            requireContext(),
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
 
@@ -223,7 +262,7 @@ class Chat : Fragment() {
                         )
                     )
                 }
-                if (it.isTyping){
+                if (it.isTyping) {
                     binding.statusCompUserChat.setText(R.string.isTyping)
                     binding.statusCompUserChat.setTextColor(
                         ContextCompat.getColor(
