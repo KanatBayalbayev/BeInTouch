@@ -38,9 +38,12 @@ class Reset : Fragment() {
         binding.buttonToReset.setOnClickListener {
             val email = binding.inputEmailReset.text.toString().trim()
             if (email.isEmpty()) {
-                Toast.makeText(requireContext(), "Введите ваш email!", Toast.LENGTH_LONG).show()
+                binding.emailReset.boxStrokeColor = resources.getColor(R.color.redOffline)
+                binding.inputEmailReset.requestFocus()
+                Toast.makeText(requireContext(), "Введите ваш email!", Toast.LENGTH_SHORT).show()
             } else {
                 mainViewModel.resetPassword(email)
+                Toast.makeText(requireContext(), "Отправлено!", Toast.LENGTH_SHORT).show()
             }
 
         }

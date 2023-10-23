@@ -67,20 +67,50 @@ class Registration : Fragment() {
 //    }
 
     private fun registerUser() {
+        binding.buttonToRegister.visibility = View.VISIBLE
+        binding.loaderLoginButton.visibility = View.GONE
         binding.buttonToRegister.setOnClickListener {
             val userName = binding.inputNameSignUp.text.toString().trim()
             val email = binding.inputEmailSignUp.text.toString().trim()
             val password = binding.inputPasswordSignUp.text.toString().trim()
 
+            if (password.isBlank()) {
+                binding.tilPasswordReg.boxStrokeColor = resources.getColor(R.color.redOffline)
+                binding.inputPasswordSignUp.requestFocus()
+            }
+            if (email.isBlank()) {
+                binding.tilEmailReg.boxStrokeColor = resources.getColor(R.color.redOffline)
+                binding.inputEmailSignUp.requestFocus()
+            }
+            if (userName.isBlank()) {
+                binding.tilUsername.boxStrokeColor = resources.getColor(R.color.redOffline)
+                binding.inputNameSignUp.requestFocus()
+            }
+
             if (userName.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_LONG).show()
 
             } else {
+                binding.buttonToRegister.visibility = View.GONE
+                binding.loaderLoginButton.visibility = View.VISIBLE
                 mainViewModel.signUpWithEmailAndPassword(
                     email,
                     password,
                     userName,
                     )
+            }
+        }
+
+        mainViewModel.isErrorReg.observe(viewLifecycleOwner){
+            if (it){
+                Toast.makeText(
+                    requireContext(),
+                    "Неправильно введен email!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                binding.buttonToRegister.visibility = View.VISIBLE
+                binding.loaderLoginButton.visibility = View.GONE
+
             }
         }
     }
