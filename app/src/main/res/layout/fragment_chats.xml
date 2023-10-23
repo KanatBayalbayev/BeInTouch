@@ -67,6 +67,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:theme="@style/AppTheme"
+        app:titleTextAppearance="@style/ToolbarTitle"
         android:background="#3949AB"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:layout_width="match_parent"
@@ -84,7 +86,7 @@
     <LinearLayout
         android:id="@+id/options"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:orientation="vertical"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="-10dp"
@@ -226,22 +228,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/buttonToCloseDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="270dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="14dp"
-            android:src="@android:drawable/btn_dialog" />
+            android:layout_gravity="end"
+            android:layout_marginTop="10dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="#2b599c" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/mainIcon"
+            app:lottie_rawRes="@raw/chattingcoupleanimation"
+            app:lottie_autoPlay="true"
+            android:visibility="visible"
+            tools:visibility="visible"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center"
+            app:lottie_loop="true"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
 
         <TextView
+            android:fontFamily="serif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Найдите пользователя по Email:"
+            android:layout_gravity="center"
+            android:text="@string/rule"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -252,6 +268,7 @@
             <EditText
                 android:id="@+id/inputSearchUser"
                 android:layout_width="0dp"
+                android:textSize="20sp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="name"
@@ -290,11 +307,19 @@
             android:background="@drawable/underline" />
 
         <LinearLayout
+            android:id="@+id/foundUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center">
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/foundUserIconCIV"
+                android:src="@drawable/usericon"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
             <ImageView
                 android:id="@+id/foundUserIcon"
                 android:layout_width="50dp"
@@ -302,10 +327,7 @@
                 android:contentDescription="@string/logoicon"
                 android:src="@drawable/usericon"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/foundUserName"
@@ -319,10 +341,11 @@
                 android:id="@+id/buttonToAddUserToChats"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="163dp"
+                android:layout_marginStart="180dp"
                 android:src="@android:drawable/ic_input_add"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="visible"
+                app:tint="#2b599c" />
 
         </LinearLayout>
 
@@ -333,8 +356,8 @@
         android:id="@+id/dialogRemoveFriend"
         android:orientation="vertical"
         android:visibility="gone"
-        tools:visibility="visible"
-        android:background="@color/white"
+        tools:visibility="gone"
+        android:background="@drawable/rounded_background_alert_dialog"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:paddingTop="10dp"
@@ -347,26 +370,57 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/deleteUserLogo"
+            android:visibility="visible"
+            tools:visibility="visible"
+            app:lottie_autoPlay="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/deletelogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+
         <TextView
-            android:textSize="16sp"
-            android:text="Are you sure, you want to delete this user?"
+            android:textSize="20sp"
+            android:fontFamily="serif"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:letterSpacing="0.04"
+            android:textStyle="bold"
+            android:text="@string/delete_this_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <LinearLayout
             android:layout_marginTop="10dp"
-            android:layout_marginStart="100dp"
+            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/buttonToDeleteFriend"
-                android:textSize="14sp"
+                android:textSize="17sp"
                 android:text="Delete"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/white"
+                android:background="@drawable/rounded_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/buttonToCancelDeletingFriend"
-                android:textSize="14sp"
-                android:layout_marginStart="80dp"
+                android:textSize="17sp"
+                android:layout_marginStart="40dp"
+                android:paddingTop="8dp"
+                android:textColor="@color/white"
+                android:paddingBottom="8dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:background="@drawable/rounded_background"
                 android:text="Cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>

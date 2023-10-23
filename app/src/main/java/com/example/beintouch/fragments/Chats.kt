@@ -20,6 +20,7 @@ import com.example.beintouch.presentation.AuthStateListener
 import com.example.beintouch.presentation.MainViewModel
 import com.example.beintouch.presentation.User
 import com.google.firebase.auth.FirebaseUser
+import com.squareup.picasso.Picasso
 
 
 class Chats : Fragment() {
@@ -29,7 +30,7 @@ class Chats : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var currentUserID: String
-    private  var userName: String = ""
+    private var userName: String = ""
     private var isOptionsMenuOpened = false
 
 
@@ -59,7 +60,6 @@ class Chats : Fragment() {
     }
 
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -73,15 +73,18 @@ class Chats : Fragment() {
                 openProfileFragment(currentUserID)
                 true
             }
+
             R.id.add_user -> {
                 dialogSearchUser()
                 true
             }
+
             R.id.logout -> {
                 mainViewModel.logout()
                 openLoginFragment()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
 
@@ -97,18 +100,22 @@ class Chats : Fragment() {
             }
 
             override fun onUserFromChatsDelete(user: User, isDialogShown: Boolean) {
-                if (isDialogShown){
+                if (isDialogShown) {
                     binding.dialogRemoveFriend.visibility = View.VISIBLE
-                } else {
-                    binding.dialogRemoveFriend.visibility = View.GONE
+                    binding.overlayView.visibility = View.VISIBLE
+                    binding.overlayView.isClickable = false
                 }
 
                 binding.buttonToDeleteFriend.setOnClickListener {
                     mainViewModel.deleteChat(currentUserID, user.id)
                     binding.dialogRemoveFriend.visibility = View.GONE
+                    binding.overlayView.visibility = View.GONE
+                    binding.overlayView.isClickable = true
                 }
                 binding.buttonToCancelDeletingFriend.setOnClickListener {
                     binding.dialogRemoveFriend.visibility = View.GONE
+                    binding.overlayView.visibility = View.GONE
+                    binding.overlayView.isClickable = true
                 }
             }
         })
@@ -164,6 +171,7 @@ class Chats : Fragment() {
             ?.replace(R.id.container, Login.newInstance())
             ?.commit()
     }
+
     private fun openProfileFragment(currentUserId: String) {
         val fragment = Profile.newInstance(currentUserId)
         val transaction = fragmentManager?.beginTransaction()
@@ -212,16 +220,39 @@ class Chats : Fragment() {
                 Toast.makeText(requireContext(), "Enter user email!", Toast.LENGTH_LONG).show()
             } else {
                 mainViewModel.findUser(user)
-                binding.buttonToAddUserToChats.visibility = View.VISIBLE
-                binding.foundUserIcon.visibility = View.VISIBLE
+//                binding.foundUser.visibility = View.VISIBLE
+//                binding.buttonToAddUserToChats.visibility = View.VISIBLE
+//                binding.foundUserIcon.visibility = View.VISIBLE
             }
         }
         mainViewModel.foundUser.observe(viewLifecycleOwner) { user ->
             if (user != null) {
-                binding.foundUserName.text = user.name
-                binding.buttonToAddUserToChats.setOnClickListener {
-                    mainViewModel.addFoundUserToChats(user)
+                binding.buttonToAddUserToChats.visibility = View.VISIBLE
+                binding.foundUserIconCIV.visibility = View.VISIBLE
+                binding.foundUser.visibility = View.VISIBLE
+                if (user.userProfileImage == "") {
+                    binding.foundUserName.text = user.name
+                    binding.buttonToAddUserToChats.setOnClickListener {
+                        mainViewModel.addFoundUserToChats(user)
+                        binding.dialogSearchUser.visibility = View.GONE
+                        binding.overlayView.visibility = View.GONE
+//                    binding.foundUser.visibility = View.GONE
+                        binding.overlayView.isClickable = false
+                    }
+                } else {
+                    Picasso.get().load(user.userProfileImage).into(binding.foundUserIconCIV)
+                    binding.foundUserName.text = user.name
+                    binding.buttonToAddUserToChats.setOnClickListener {
+                        mainViewModel.addFoundUserToChats(user)
+                        binding.dialogSearchUser.visibility = View.GONE
+                        binding.overlayView.visibility = View.GONE
+//                    binding.foundUser.visibility = View.GONE
+                        binding.overlayView.isClickable = false
+                    }
                 }
+
+            } else {
+                binding.foundUser.visibility = View.GONE
             }
         }
 
