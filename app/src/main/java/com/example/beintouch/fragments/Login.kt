@@ -1,6 +1,10 @@
 package com.example.beintouch.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.InputType
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,12 +24,16 @@ class Login : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var userEmail: String
     private lateinit var userPassword: String
+    private lateinit var sharedPreferences: SharedPreferences
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        sharedPreferences =
+            requireActivity().getSharedPreferences("myPreferences", Context.MODE_PRIVATE)
+
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -36,8 +44,16 @@ class Login : Fragment() {
         launchReset()
         checkUserForLogin()
         observeViewModel()
+        saveUserData()
         binding.buttonToLogin.visibility = View.VISIBLE
         binding.loaderLoginButton.visibility = View.GONE
+
+        val email = sharedPreferences.getString("email", "")
+        val password = sharedPreferences.getString("password", "")
+        val isChecked = sharedPreferences.getBoolean("isChecked", false)
+        binding.emailInputLogin.setText(email)
+        binding.passwordInputLogin.setText(password)
+        binding.checkboxRemember.isChecked = isChecked
 
     }
 
@@ -45,6 +61,15 @@ class Login : Fragment() {
         binding.buttonToLogin.setOnClickListener {
             userEmail = binding.emailInputLogin.text.toString().trim()
             userPassword = binding.passwordInputLogin.text.toString().trim()
+            if (userPassword.isBlank()) {
+                binding.tilPassword.boxStrokeColor = resources.getColor(R.color.redOffline)
+                binding.passwordInputLogin.requestFocus()
+            }
+            if (userEmail.isBlank()) {
+                binding.tilEmail.boxStrokeColor = resources.getColor(R.color.redOffline)
+                binding.emailInputLogin.requestFocus()
+            }
+
             if (userEmail.isEmpty() || userPassword.isEmpty()
             ) {
                 Toast.makeText(requireContext(), "Заполните все поля!", Toast.LENGTH_LONG).show()
@@ -54,25 +79,53 @@ class Login : Fragment() {
                 Toast.makeText(
                     requireContext(),
                     "Выполняется вход!!",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
                 mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
 
             }
-            mainViewModel.isError.observe(viewLifecycleOwner){
-                if (it){
-                    binding.buttonToLogin.visibility = View.VISIBLE
-                    binding.loaderLoginButton.visibility = View.GONE
+            if (binding.checkboxRemember.isChecked){
+                if (userEmail.isNotEmpty() && userPassword.isNotEmpty()) {
+                    val editor = sharedPreferences.edit()
+                    editor.putString("email", userEmail)
+                    editor.putString("password", userPassword)
+                    editor.putBoolean("isChecked", true)
+                    editor.apply()
+
+                }
+            }
+            mainViewModel.isError.observe(viewLifecycleOwner) {
+                if (it) {
                     Toast.makeText(
                         requireContext(),
-                        "Неправильно введен email или password!",
-                        Toast.LENGTH_LONG
+                        "Неправильный логин или пароль!",
+                        Toast.LENGTH_SHORT
                     ).show()
+                    binding.buttonToLogin.visibility = View.VISIBLE
+                    binding.loaderLoginButton.visibility = View.GONE
                 }
             }
         }
 
+        binding.buttonClosePassword.setOnClickListener {
+            binding.passwordInputLogin.transformationMethod = null
+            binding.buttonOpenPassword.visibility = View.VISIBLE
+            binding.buttonClosePassword.visibility = View.GONE
+        }
+        binding.buttonOpenPassword.setOnClickListener {
+            binding.passwordInputLogin.transformationMethod = PasswordTransformationMethod.getInstance()
+            binding.buttonOpenPassword.visibility = View.GONE
+            binding.buttonClosePassword.visibility = View.VISIBLE
+        }
+
     }
+
+    private fun saveUserData() {
+
+
+
+    }
+
 
     private fun observeViewModel() {
 //        mainViewModel.error.observe(viewLifecycleOwner) {

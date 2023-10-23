@@ -12,7 +12,7 @@
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_up_logo">Sign Up</string>
-    <string name="username">Full name</string>
+    <string name="username">Username</string>
     <string name="createAccount">CREATE ACCOUNT</string>
     <string name="already_have_an_account">Already have an acoount?</string>
     <string name="loginText">Login</string>
@@ -37,7 +37,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete_the_chat">Delete the chat</string>
     <string name="deleteuserchatitem">deleteUserChatItem</string>
-    <string name="add_user">Add User</string>
+    <string name="add_user">Add friend</string>
     <string name="unreadmessage">unreadmessage</string>
     <string name="readmessage">readmessage</string>
     <string name="saveDataProfile">SAVE</string>
@@ -45,4 +45,7 @@
     <string name="your_current_password">Your current Password</string>
     <string name="enter_your_new_password">Enter your new password</string>
     <string name="isTyping">Typing…</string>
+    <string name="remember">Remember me</string>
+    <string name="delete_this_chat">Delete this chat?</string>
+    <string name="rule">Найдите пользователя по его Email</string>
 </resources>

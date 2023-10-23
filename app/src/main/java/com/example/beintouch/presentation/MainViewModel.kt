@@ -61,6 +61,10 @@ class MainViewModel : ViewModel() {
     val isError: LiveData<Boolean>
         get() = _isError
 
+    private val _isErrorReg= MutableLiveData<Boolean>()
+    val isErrorReg: LiveData<Boolean>
+        get() = _isErrorReg
+
 
     init {
         getLastMessage("3QMKol7gxFUML6PCJMh7SGnbV1h2", "rjpgDn1FMlWeVGQerVeswU4sL6P2")
@@ -321,6 +325,7 @@ class MainViewModel : ViewModel() {
     ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+                _isErrorReg.value = false
                 val userInfo = it.user
 
                 val newUser = userInfo?.let { user ->
@@ -338,8 +343,10 @@ class MainViewModel : ViewModel() {
                 }
 
 
+
             }
             .addOnFailureListener {
+                _isErrorReg.value = true
                 _errorMessage.value = it.message
             }
 //        uploadImageToFirebaseStorage(email, password, full_name, isOnline, userProfileImage)
