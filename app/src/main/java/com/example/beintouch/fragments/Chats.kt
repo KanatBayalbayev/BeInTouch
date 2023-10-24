@@ -24,14 +24,10 @@ import com.squareup.picasso.Picasso
 
 
 class Chats : Fragment() {
-    private var mainMenu: Menu? = null
-
     private lateinit var binding: FragmentChatsBinding
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var currentUserID: String
-    private var userName: String = ""
-    private var isOptionsMenuOpened = false
 
 
     override fun onCreateView(
@@ -54,9 +50,6 @@ class Chats : Fragment() {
         setHasOptionsMenu(true)
         attachAdapterToRV()
         observeViewModel()
-        logOut()
-
-        showDialogSearchUser()
         closeAlertDialog()
     }
 
@@ -64,8 +57,6 @@ class Chats : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
         super.onCreateOptionsMenu(menu, inflater)
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -92,37 +83,47 @@ class Chats : Fragment() {
 
     }
 
+    private fun overLayAndDialogRemoveFriendOff() {
+        binding.dialogRemoveFriend.visibility = View.GONE
+        binding.overlayView.visibility = View.GONE
+        binding.overlayView.isClickable = true
+    }
+
+    private fun overLayAndDialogAddFriendOff() {
+        binding.dialogSearchUser.visibility = View.GONE
+        binding.overlayView.visibility = View.GONE
+        binding.overlayView.isClickable = true
+    }
+
+    private fun overLayAndDialogRemoveFriendOn() {
+        binding.dialogRemoveFriend.visibility = View.VISIBLE
+        binding.overlayView.visibility = View.VISIBLE
+        binding.overlayView.isClickable = false
+    }
+
     private fun attachAdapterToRV() {
         chatAdapter = ChatAdapter(object : OnItemClickListener {
             override fun onItemClick(user: User) {
                 openChatFragment(currentUserID, user.id)
-
-
             }
 
             override fun onUserFromChatsDelete(user: User, isDialogShown: Boolean) {
                 if (isDialogShown) {
-                    binding.dialogRemoveFriend.visibility = View.VISIBLE
-                    binding.overlayView.visibility = View.VISIBLE
-                    binding.overlayView.isClickable = false
+                    overLayAndDialogRemoveFriendOn()
                 }
 
                 binding.buttonToDeleteFriend.setOnClickListener {
                     mainViewModel.deleteChat(currentUserID, user.id)
-                    binding.dialogRemoveFriend.visibility = View.GONE
-                    binding.overlayView.visibility = View.GONE
-                    binding.overlayView.isClickable = true
+                    overLayAndDialogRemoveFriendOff()
                 }
+
                 binding.buttonToCancelDeletingFriend.setOnClickListener {
-                    binding.dialogRemoveFriend.visibility = View.GONE
-                    binding.overlayView.visibility = View.GONE
-                    binding.overlayView.isClickable = true
+                    overLayAndDialogRemoveFriendOff()
                 }
             }
         })
 
         binding.recyclerViewChats.adapter = chatAdapter
-
 
         mainViewModel.userList.observe(viewLifecycleOwner) {
             chatAdapter.submitList(it)
@@ -145,16 +146,11 @@ class Chats : Fragment() {
     private fun observeViewModel() {
         mainViewModel.setAuthStateListener(object : AuthStateListener {
             override fun onUserAuthenticated(user: FirebaseUser?) {
-
             }
 
             override fun onUserUnauthenticated() {
                 mainViewModel.setUserOnline(false)
-                fragmentManager?.beginTransaction()
-                    ?.replace(R.id.container, Login.newInstance())
-                    ?.commit()
-                Log.d("ChatsNoConnection", "No Connection")
-
+                openLoginFragment()
             }
         }, currentUserID)
         mainViewModel.userName.observe(viewLifecycleOwner) {
@@ -184,38 +180,12 @@ class Chats : Fragment() {
         transaction?.commit()
     }
 
-    private fun logOut() {
-        binding.buttonToLogOut.setOnClickListener {
 
-            mainViewModel.logout()
-            openLoginFragment()
-        }
 
-    }
 
-    private fun showDialogSearchUser() {
-        binding.findUser.setOnClickListener {
-            dialogSearchUser()
-        }
-    }
-
-    private fun showOptionsMenu() {
-        binding.optionsMenu.setOnClickListener {
-            isOptionsMenuOpened = !isOptionsMenuOpened
-            if (isOptionsMenuOpened) {
-                binding.options.visibility = View.VISIBLE
-            } else {
-                binding.options.visibility = View.GONE
-            }
-
-            Log.d("CHatsFrag", isOptionsMenuOpened.toString())
-        }
-    }
 
 
     private fun dialogSearchUser() {
-        isOptionsMenuOpened = !isOptionsMenuOpened
-        Log.d("CHatsFrag", isOptionsMenuOpened.toString())
         binding.dialogSearchUser.visibility = View.VISIBLE
         binding.overlayView.visibility = View.VISIBLE
         binding.overlayView.isClickable = true
@@ -233,54 +203,34 @@ class Chats : Fragment() {
                 binding.buttonToAddUserToChats.visibility = View.VISIBLE
                 binding.foundUserIconCIV.visibility = View.VISIBLE
                 binding.foundUser.visibility = View.VISIBLE
-                if (user.userProfileImage == "") {
-                    binding.foundUserName.text = user.name
-                    binding.buttonToAddUserToChats.setOnClickListener {
-                        mainViewModel.addFoundUserToChats(user)
-                        binding.dialogSearchUser.visibility = View.GONE
-                        binding.overlayView.visibility = View.GONE
-//                    binding.foundUser.visibility = View.GONE
-                        binding.overlayView.isClickable = false
-                    }
-                } else {
-                    Picasso.get().load(user.userProfileImage).into(binding.foundUserIconCIV)
-                    binding.foundUserName.text = user.name
-                    binding.buttonToAddUserToChats.setOnClickListener {
-                        mainViewModel.addFoundUserToChats(user)
-                        binding.dialogSearchUser.visibility = View.GONE
-                        binding.overlayView.visibility = View.GONE
-//                    binding.foundUser.visibility = View.GONE
-                        binding.overlayView.isClickable = false
-                    }
+
+                binding.foundUserName.text = user.name
+                binding.buttonToAddUserToChats.setOnClickListener {
+                    mainViewModel.addFoundUserToChats(user)
+                    overLayAndDialogAddFriendOff()
                 }
 
+                val hasProfileImage = user.userProfileImage != ""
+                binding.foundUserIconCIV.visibility =
+                    if (hasProfileImage) View.VISIBLE else View.GONE
+                binding.foundUserIcon.visibility = if (hasProfileImage) View.GONE else View.VISIBLE
+
+                if (hasProfileImage) {
+                    Picasso.get().load(user.userProfileImage).into(binding.foundUserIconCIV)
+                }
             }
         }
-//        mainViewModel.isErrorFound.observe(viewLifecycleOwner){
-//            if (it){
-//                binding.notFound.visibility = View.VISIBLE
-//            }
-//        }
-
-
-
     }
 
     private fun closeAlertDialog() {
         binding.buttonToCloseDialog.setOnClickListener {
-            isOptionsMenuOpened = !isOptionsMenuOpened
-            Log.d("CHatsFrag", isOptionsMenuOpened.toString())
-            binding.dialogSearchUser.visibility = View.GONE
-            binding.overlayView.visibility = View.GONE
-            binding.overlayView.isClickable = false
+            overLayAndDialogAddFriendOff()
         }
 
     }
 
-
     companion object {
         private const val KEY_CURRENT_USER_ID = "current_user_id"
-
         @JvmStatic
         fun newInstance(parameterUserID: String = ""): Chats {
             val fragment = Chats()

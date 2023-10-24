@@ -56,4 +56,8 @@
     <string name="delivered">Delivered</string>
     <string name="buttonclosepassword">buttonClosePassword</string>
     <string name="buttonopenpassword">buttonOpenPassword</string>
+    <string name="trash">trash</string>
+    <string name="buttontoclosedialog">buttonToCloseDialog</string>
+    <string name="buttontoaddusertochats">buttonToAddUserToChats</string>
+    <string name="delete">Delete</string>
 </resources>
