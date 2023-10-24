@@ -1,5 +1,6 @@
 package com.example.beintouch.adapters
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +19,10 @@ import java.util.Locale
 class MessagesAdapter(
     private val userID: String,
     private val compID: String,
+    context: Context
 ) : ListAdapter<Message, MessagesAdapter.ViewHolder>(Comparator()) {
     var list = 0
-
+    private val mContext: Context = context
 
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -81,9 +83,9 @@ class MessagesAdapter(
         if (position == currentList.size - 1){
             if (message.senderID == userID){
                 if (message.isseen){
-                    holder.messageSeen.text = "Seen"
+                    holder.messageSeen.text = mContext.resources.getString(R.string.seen)
                 } else {
-                    holder.messageSeen.text = "Delivered"
+                    holder.messageSeen.text = mContext.resources.getString(R.string.delivered)
                 }
             }
         } else {
@@ -97,8 +99,6 @@ class MessagesAdapter(
         currentList: MutableList<Message>
     ) {
         super.onCurrentListChanged(previousList, currentList)
-
-
     }
 
     companion object {

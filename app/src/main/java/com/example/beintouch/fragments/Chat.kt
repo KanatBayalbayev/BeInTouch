@@ -209,7 +209,7 @@ class Chat : Fragment() {
     private fun observeViewModel() {
         chatViewModel.messagesList.observe(viewLifecycleOwner) {
 
-            messagesAdapter = MessagesAdapter(currentUserID, companionUserID)
+            messagesAdapter = MessagesAdapter(currentUserID, companionUserID, requireContext())
             binding.testRv.layoutManager = LinearLayoutManager(requireContext())
             binding.testRv.adapter = messagesAdapter
 
