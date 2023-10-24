@@ -25,7 +25,7 @@ import java.io.FileOutputStream
 class Registration : Fragment() {
     private lateinit var binding: FragmentRegistrationBinding
     private val mainViewModel: MainViewModel by activityViewModels()
-//    private var selectemImageUri: Uri? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,32 +39,7 @@ class Registration : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         backToLogin()
         registerUser()
-
-//        binding.selectImageButton.setOnClickListener {
-//            openGallery()
-//        }
-
     }
-
-//    private fun openGallery() {
-//        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//        intent.type = "image/*"
-//        startActivityForResult(intent, 1)
-//
-//    }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
-//            selectemImageUri = data.data!!
-//            val bitmap = selectemImageUri.let {
-//                MediaStore.Images.Media.getBitmap(requireContext().contentResolver, it)
-//            }
-//            if (bitmap != null) {
-//                binding.imageUserProfile.setImageBitmap(bitmap)
-//            }
-//        }
-//    }
 
     private fun registerUser() {
         binding.buttonToRegister.visibility = View.VISIBLE
@@ -110,36 +85,23 @@ class Registration : Fragment() {
                 ).show()
                 binding.buttonToRegister.visibility = View.VISIBLE
                 binding.loaderLoginButton.visibility = View.GONE
-
             }
         }
     }
 
-//    private fun dd() {
-//        val resources = resources
-//        val resourceId = R.drawable.usericon
-//        val bitmap = BitmapFactory.decodeResource(resources, resourceId)
-//        val tempFile = File.createTempFile("temp_image", ".jpg", requireContext().cacheDir)
-//        val outputStream = FileOutputStream(tempFile)
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-//        outputStream.close()
-//        selectemImageUri =
-//            FileProvider.getUriForFile(requireContext(), "your_package_name.fileprovider", tempFile)
-//        binding.imageUserProfile.setImageURI(selectemImageUri)
-//    }
 
     private fun backToLogin() {
         binding.buttonToBackToLoginFromSignUp.setOnClickListener {
-            fragmentManager?.beginTransaction()
-                ?.replace(R.id.container, Login.newInstance())
-                ?.commit()
+            navigateToLoginFragment()
         }
         binding.loginButton.setOnClickListener {
-            fragmentManager?.beginTransaction()
-                ?.replace(R.id.container, Login.newInstance())
-                ?.commit()
+            navigateToLoginFragment()
         }
-
+    }
+    private fun navigateToLoginFragment() {
+        fragmentManager?.beginTransaction()
+            ?.replace(R.id.container, Login.newInstance())
+            ?.commit()
     }
 
 
