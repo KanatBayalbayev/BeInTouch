@@ -40,21 +40,26 @@ class Login : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        launchSignUp()
-        launchReset()
+        launchSignUpAndReset()
         checkUserForLogin()
         observeViewModel()
-        saveUserData()
+        makingButtonToLoginVisible()
+        savingSharedPreferences()
+
+
+    }
+
+    private fun makingButtonToLoginVisible(){
         binding.buttonToLogin.visibility = View.VISIBLE
         binding.loaderLoginButton.visibility = View.GONE
-
+    }
+    private fun savingSharedPreferences(){
         val email = sharedPreferences.getString("email", "")
         val password = sharedPreferences.getString("password", "")
         val isChecked = sharedPreferences.getBoolean("isChecked", false)
         binding.emailInputLogin.setText(email)
         binding.passwordInputLogin.setText(password)
         binding.checkboxRemember.isChecked = isChecked
-
     }
 
     private fun checkUserForLogin() {
@@ -78,7 +83,7 @@ class Login : Fragment() {
                 binding.buttonToLogin.visibility = View.GONE
                 Toast.makeText(
                     requireContext(),
-                    "Выполняется вход!!",
+                    "Выполняется вход",
                     Toast.LENGTH_SHORT
                 ).show()
                 mainViewModel.signInWithEmailAndPassword(userEmail, userPassword)
@@ -91,7 +96,6 @@ class Login : Fragment() {
                     editor.putString("password", userPassword)
                     editor.putBoolean("isChecked", true)
                     editor.apply()
-
                 }
             }
             mainViewModel.isError.observe(viewLifecycleOwner) {
@@ -101,8 +105,7 @@ class Login : Fragment() {
                         "Неправильный логин или пароль!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    binding.buttonToLogin.visibility = View.VISIBLE
-                    binding.loaderLoginButton.visibility = View.GONE
+                    makingButtonToLoginVisible()
                 }
             }
             mainViewModel.noConnection.observe(viewLifecycleOwner){
@@ -116,49 +119,31 @@ class Login : Fragment() {
         }
 
         binding.buttonClosePassword.setOnClickListener {
-            binding.passwordInputLogin.transformationMethod = null
-            binding.buttonOpenPassword.visibility = View.VISIBLE
-            binding.buttonClosePassword.visibility = View.GONE
+            togglePasswordVisibility()
         }
         binding.buttonOpenPassword.setOnClickListener {
-            binding.passwordInputLogin.transformationMethod = PasswordTransformationMethod.getInstance()
-            binding.buttonOpenPassword.visibility = View.GONE
-            binding.buttonClosePassword.visibility = View.VISIBLE
+            togglePasswordVisibility()
         }
 
     }
+    private fun togglePasswordVisibility() {
+        val isPasswordVisible = binding.passwordInputLogin.transformationMethod == null
+        binding.passwordInputLogin.transformationMethod =
+            if (isPasswordVisible) PasswordTransformationMethod.getInstance() else null
 
-    private fun saveUserData() {
-
-
-
+        binding.buttonOpenPassword.visibility = if (isPasswordVisible) View.VISIBLE else View.GONE
+        binding.buttonClosePassword.visibility = if (isPasswordVisible) View.GONE else View.VISIBLE
     }
 
-
     private fun observeViewModel() {
-//        mainViewModel.error.observe(viewLifecycleOwner) {
-//            if (it != null) {
-//                Toast.makeText(
-//                    requireContext(),
-//                    "Неправильно введен email или password!",
-//                    Toast.LENGTH_LONG
-//                ).show()
-//                binding.loaderLoginButton.visibility = View.GONE
-//            }
-//
-//        }
-
         mainViewModel.setAuthStateListener(object : AuthStateListener {
             override fun onUserAuthenticated(user: FirebaseUser?) {
                 if (user != null) {
-                    Log.d("Login", "USER: ${user.uid}")
                     fragmentManager?.beginTransaction()
                         ?.replace(R.id.container, Chats.newInstance(user.uid))
                         ?.commit()
                 }
-
             }
-
             override fun onUserUnauthenticated() {
                 Log.d("Login", "Unauthorized")
             }
@@ -166,23 +151,19 @@ class Login : Fragment() {
         })
     }
 
-
-    private fun launchSignUp() {
+    private fun launchSignUpAndReset() {
         binding.buttonToSignUp.setOnClickListener {
-            fragmentManager?.beginTransaction()
-                ?.replace(R.id.container, Registration.newInstance())
-                ?.addToBackStack(null)
-                ?.commit()
+            replaceFragment(Registration.newInstance())
+        }
+        binding.buttonToOpenReset.setOnClickListener {
+            replaceFragment(Reset.newInstance())
         }
     }
-
-    private fun launchReset() {
-        binding.buttonToOpenReset.setOnClickListener {
-            fragmentManager?.beginTransaction()
-                ?.replace(R.id.container, Reset.newInstance())
-                ?.addToBackStack(null)
-                ?.commit()
-        }
+    private fun replaceFragment(fragment: Fragment) {
+        fragmentManager?.beginTransaction()
+            ?.replace(R.id.container, fragment)
+            ?.addToBackStack(null)
+            ?.commit()
     }
 
 
