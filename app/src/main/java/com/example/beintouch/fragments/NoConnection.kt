@@ -23,11 +23,15 @@ class NoConnection : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        backToLogin()
+    }
+    private fun backToLogin(){
         binding.buttonToTryAgain.setOnClickListener {
             fragmentManager?.beginTransaction()
                 ?.replace(R.id.container, Login.newInstance())
                 ?.commit()
         }
+
     }
 
     companion object {
