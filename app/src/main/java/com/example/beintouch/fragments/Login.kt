@@ -119,21 +119,18 @@ class Login : Fragment() {
         }
 
         binding.buttonClosePassword.setOnClickListener {
-            togglePasswordVisibility()
+            binding.passwordInputLogin.transformationMethod = null
+            binding.buttonOpenPassword.visibility = View.VISIBLE
+            binding.buttonClosePassword.visibility = View.GONE
         }
         binding.buttonOpenPassword.setOnClickListener {
-            togglePasswordVisibility()
+            binding.passwordInputLogin.transformationMethod = PasswordTransformationMethod.getInstance()
+            binding.buttonOpenPassword.visibility = View.GONE
+            binding.buttonClosePassword.visibility = View.VISIBLE
         }
 
     }
-    private fun togglePasswordVisibility() {
-        val isPasswordVisible = binding.passwordInputLogin.transformationMethod == null
-        binding.passwordInputLogin.transformationMethod =
-            if (isPasswordVisible) PasswordTransformationMethod.getInstance() else null
 
-        binding.buttonOpenPassword.visibility = if (isPasswordVisible) View.VISIBLE else View.GONE
-        binding.buttonClosePassword.visibility = if (isPasswordVisible) View.GONE else View.VISIBLE
-    }
 
     private fun observeViewModel() {
         mainViewModel.setAuthStateListener(object : AuthStateListener {
