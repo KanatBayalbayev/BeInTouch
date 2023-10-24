@@ -54,4 +54,6 @@
     <string name="try_again">Try Again</string>
     <string name="seen">Seen</string>
     <string name="delivered">Delivered</string>
+    <string name="buttonclosepassword">buttonClosePassword</string>
+    <string name="buttonopenpassword">buttonOpenPassword</string>
 </resources>
