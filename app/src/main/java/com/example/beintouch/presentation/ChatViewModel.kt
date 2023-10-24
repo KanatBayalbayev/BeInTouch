@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -33,6 +34,9 @@ class ChatViewModel(
     private val messages = database.getReference("Messages")
     private val friends = database.getReference("Friends")
     private val tokens = database.getReference("Tokens")
+    private lateinit var reference: DatabaseReference
+    private lateinit var seenListener: ValueEventListener
+
     var notify = false
 
 
@@ -58,29 +62,9 @@ class ChatViewModel(
 
     init {
         med()
-        findUser("Kanat@gmail.com")
+        seenMessage()
     }
 
-    private fun findUser(email: String) {
-        users.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (userDb in snapshot.children) {
-                    val userEmail = userDb.child("email").getValue(String::class.java)
-                    if (email == userEmail) {
-                        Log.d("FindUserModel", "Found UserEmail: $email")
-                    }
-
-                }
-
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("FindUserModel", "Found Error: $error")
-            }
-
-        })
-    }
 
     private fun med() {
         users.child(companionID).addValueEventListener(object : ValueEventListener {
@@ -293,6 +277,32 @@ class ChatViewModel(
                 Log.d("ChatViewModel", "MessageErrorOfCurrentUser: " + it.message.toString())
             }
 
+    }
+
+    private fun seenMessage(){
+        reference = database.getReference("Messages").child(companionID)
+            .child(auth.currentUser?.uid ?: "")
+        seenListener = reference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (snap in snapshot.children) {
+                    val chat = snap.getValue(Message::class.java)
+                    Log.d("CheckTest", snap.toString())
+                    if (chat?.companionID == auth.currentUser?.uid && chat?.senderID == companionID) {
+                        val hashMap = HashMap<String, Any>()
+                        hashMap["isseen"] = true
+                        snap.ref.updateChildren(hashMap)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+        })
+    }
+
+    fun removeEventListener(){
+        reference.removeEventListener(seenListener)
     }
 
 

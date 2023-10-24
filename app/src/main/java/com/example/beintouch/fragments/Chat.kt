@@ -63,9 +63,6 @@ class Chat : Fragment() {
         val viewModelFactory = ChatViewModelFactory(currentUserID, companionUserID)
         chatViewModel = ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
 
-
-
-
         binding = ChatBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -74,59 +71,32 @@ class Chat : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         backToChatsFromChat()
         observeViewModel()
-        seenMessage()
-        binding.buttonToSendMessage.setOnClickListener {
-            val textMessage = binding.inputMessageFromUser.text.toString().trim()
-            binding.inputMessageFromUser.setText("")
-            val message =
-                Message(textMessage, currentUserID, companionUserID, getCurrentTime(), false)
-            chatViewModel.sendMessage(message, currentUser)
-//            showNotification()
-
-        }
+        sendMessage()
         textWatcher()
 
 
     }
 
-    private fun showNotification() {
-        val notificationManager =
-            requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channelId = "channel_id"
-        val notification = NotificationCompat.Builder(requireContext(), channelId)
-            .setContentTitle("Заголовок уведомления")
-            .setContentText("Текст уведомления")
-            .setSmallIcon(R.drawable.usericon)
-            .setContentIntent(getPendingIntent())
-            .build()
+    private fun sendMessage() {
+        binding.buttonToSendMessage.setOnClickListener {
+            val textMessage = binding.inputMessageFromUser.text.toString().trim()
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Название канала",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
+            if (binding.inputMessageFromUser.text.toString()
+                    .trim() == ""
+            ){
+                return@setOnClickListener
+            }
+
+            val message =
+                Message(textMessage, currentUserID, companionUserID, getCurrentTime(), false)
+            chatViewModel.sendMessage(message, currentUser)
+            binding.inputMessageFromUser.setText("")
         }
-
-        notificationManager.notify(1, notification)
     }
-
-    private fun getPendingIntent(): PendingIntent {
-        val intent = Intent(requireContext(), Chat::class.java)
-        return PendingIntent.getActivity(
-            requireContext(),
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-    }
-
 
     private fun textWatcher() {
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Не используется
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -139,34 +109,9 @@ class Chat : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // Не используется
             }
         }
         binding.inputMessageFromUser.addTextChangedListener(textWatcher)
-    }
-
-
-    private fun seenMessage() {
-        reference1 = database.getReference("Messages").child(companionUserID)
-            .child(auth.currentUser?.uid ?: "")
-        seenListener1 = reference1.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (snap in snapshot.children) {
-                    val chat = snap.getValue(Message::class.java)
-                    Log.d("CheckTest", snap.toString())
-                    if (chat?.companionID == auth.currentUser?.uid && chat?.senderID == companionUserID) {
-                        val hashMap = HashMap<String, Any>()
-                        hashMap["isseen"] = true
-                        snap.ref.updateChildren(hashMap)
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("Tester", "it is not working")
-            }
-
-        })
     }
 
     private fun getCurrentTime(): String {
@@ -193,7 +138,7 @@ class Chat : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        reference1.removeEventListener(seenListener1)
+        chatViewModel.removeEventListener()
         chatViewModel.setUserOnline(false)
         chatViewModel.textWatch(false)
     }
@@ -229,7 +174,7 @@ class Chat : Fragment() {
                 if (it.isEmpty()) {
                     return@submitList
                 }
-//                binding.testRv.smoothScrollToPosition(it.size - 1)
+                binding.testRv.scrollToPosition(it.size - 1)
             }
         }
         chatViewModel.companionUser.observe(viewLifecycleOwner) {
