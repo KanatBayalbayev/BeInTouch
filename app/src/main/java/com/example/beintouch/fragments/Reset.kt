@@ -26,12 +26,16 @@ class Reset : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        backToLogin()
+        resetPassword()
+    }
+
+    private fun backToLogin() {
         binding.buttonToBackToLoginFromReset.setOnClickListener {
             fragmentManager?.beginTransaction()
                 ?.replace(R.id.container, Login.newInstance())
                 ?.commit()
         }
-        resetPassword()
     }
 
     private fun resetPassword() {
