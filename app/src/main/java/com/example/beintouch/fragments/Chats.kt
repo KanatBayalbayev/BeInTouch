@@ -46,6 +46,7 @@ class Chats : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("ChatNoConnection", currentUserID)
 
         activity?.let {
             (it as AppCompatActivity).setSupportActionBar(binding.toolbar)
@@ -149,6 +150,10 @@ class Chats : Fragment() {
 
             override fun onUserUnauthenticated() {
                 mainViewModel.setUserOnline(false)
+                fragmentManager?.beginTransaction()
+                    ?.replace(R.id.container, Login.newInstance())
+                    ?.commit()
+                Log.d("ChatsNoConnection", "No Connection")
 
             }
         }, currentUserID)
@@ -220,13 +225,11 @@ class Chats : Fragment() {
                 Toast.makeText(requireContext(), "Enter user email!", Toast.LENGTH_LONG).show()
             } else {
                 mainViewModel.findUser(user)
-//                binding.foundUser.visibility = View.VISIBLE
-//                binding.buttonToAddUserToChats.visibility = View.VISIBLE
-//                binding.foundUserIcon.visibility = View.VISIBLE
             }
         }
         mainViewModel.foundUser.observe(viewLifecycleOwner) { user ->
             if (user != null) {
+                binding.notFound.visibility = View.GONE
                 binding.buttonToAddUserToChats.visibility = View.VISIBLE
                 binding.foundUserIconCIV.visibility = View.VISIBLE
                 binding.foundUser.visibility = View.VISIBLE
@@ -251,10 +254,15 @@ class Chats : Fragment() {
                     }
                 }
 
-            } else {
-                binding.foundUser.visibility = View.GONE
             }
         }
+//        mainViewModel.isErrorFound.observe(viewLifecycleOwner){
+//            if (it){
+//                binding.notFound.visibility = View.VISIBLE
+//            }
+//        }
+
+
 
     }
 

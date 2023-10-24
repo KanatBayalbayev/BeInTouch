@@ -77,6 +77,7 @@ class Chat : Fragment() {
         seenMessage()
         binding.buttonToSendMessage.setOnClickListener {
             val textMessage = binding.inputMessageFromUser.text.toString().trim()
+            binding.inputMessageFromUser.setText("")
             val message =
                 Message(textMessage, currentUserID, companionUserID, getCurrentTime(), false)
             chatViewModel.sendMessage(message, currentUser)

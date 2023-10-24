@@ -105,6 +105,14 @@ class Login : Fragment() {
                     binding.loaderLoginButton.visibility = View.GONE
                 }
             }
+            mainViewModel.noConnection.observe(viewLifecycleOwner){
+                if (it){
+                    fragmentManager?.beginTransaction()
+                        ?.replace(R.id.container, NoConnection.newInstance())
+                        ?.commit()
+                }
+            }
+
         }
 
         binding.buttonClosePassword.setOnClickListener {

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -65,6 +66,14 @@ class MainViewModel : ViewModel() {
     val isErrorReg: LiveData<Boolean>
         get() = _isErrorReg
 
+    private val _isErrorFound= MutableLiveData<Boolean>()
+    val isErrorFound: LiveData<Boolean>
+        get() = _isErrorFound
+
+    private val _noConnection= MutableLiveData<Boolean>()
+    val noConnection: LiveData<Boolean>
+        get() = _noConnection
+
 
     init {
         getLastMessage("3QMKol7gxFUML6PCJMh7SGnbV1h2", "rjpgDn1FMlWeVGQerVeswU4sL6P2")
@@ -118,26 +127,28 @@ class MainViewModel : ViewModel() {
 
 
     fun findUser(email: String) {
+        val emailUser = email.replaceFirst(email[0], email[0].lowercaseChar())
         users.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-//                val listOfUsers = arrayListOf<User>()
                 for (userDb in snapshot.children) {
                     val userEmail = userDb.child("email").getValue(String::class.java)
-                    if (email == userEmail) {
+                    if (emailUser == userEmail) {
                         val userFromDB = userDb.getValue(User::class.java)
                         if (userFromDB != null) {
-//                            listOfUsers.add(userFromDB)
                             _foundUser.value = userFromDB
+                            _isErrorFound.value = false
                             Log.d("FoundUser", userFromDB.name)
                         }
+                    } else {
+                        _isErrorFound.value = true
+                        Log.d("FoundUser", "No such a user")
                     }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.d("New Users", error.toString())
+                Log.d("Error", error.toString())
             }
-
         })
     }
 
@@ -309,13 +320,25 @@ class MainViewModel : ViewModel() {
 
     fun signInWithEmailAndPassword(userEmail: String, userPassword: String) {
         auth.signInWithEmailAndPassword(userEmail, userPassword)
-            .addOnSuccessListener {
-                _isError.value = false
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    _isError.value = false
+                    _noConnection.value = false
+                } else {
+                    val exception = it.exception
+                    if (exception is FirebaseNetworkException) {
+                        _noConnection.value = true
+                        Log.d("NoConnection", "No Connection!!!")
+                    }
+                }
             }
-            .addOnFailureListener {
-                _errorMessage.value = it.message
-                _isError.value = true
-            }
+//            .addOnSuccessListener {
+//                _isError.value = false
+//            }
+//            .addOnFailureListener {
+//                _errorMessage.value = it.message
+//                _isError.value = true
+//            }
     }
 
     fun signUpWithEmailAndPassword(
@@ -323,6 +346,7 @@ class MainViewModel : ViewModel() {
         password: String,
         full_name: String
     ) {
+        val emailUser = email.replaceFirst(email[0], email[0].lowercaseChar())
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 _isErrorReg.value = false
@@ -331,7 +355,7 @@ class MainViewModel : ViewModel() {
                 val newUser = userInfo?.let { user ->
                     User(
                         user.uid,
-                        email,
+                        emailUser,
                         password,
                         full_name,
                         true,
