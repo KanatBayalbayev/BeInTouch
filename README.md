@@ -3,7 +3,7 @@
 <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/2d2d9b77-ae3b-4eed-86f0-73391046de7d" width="320" height="700">
 <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/73911f82-7d87-4eeb-b567-b6f869641691" width="320" height="700"> <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/e43e3d64-30db-450e-8435-13c541f79b9d" width="320" height="700">
 
-                                                                                      BeInTouch Messenger
+BeInTouch Messenger
 
 BeInTouch чат-приложение на Kotlin представляет собой инструмент для общения и обмена сообщениями, разработанный с использованием современных технологий и лучших практик в сфере мобильной разработки. Приложение предоставляет возможность надежной и удобной коммуникации между пользователями, а также предлагает ряд уникальных особенностей:
 
