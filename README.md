@@ -1,5 +1,5 @@
 ![1698495910581](https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/83871c1e-f7fa-4f61-b592-5a9866056a1d) ![1698495905372](https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/f19445d9-9236-4326-99e6-ea547bfc169d) 
-<img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/8c1e38bb-7e98-4c98-8ece-ab3e7bb83b6a" width="200" height="200">
+<img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/8c1e38bb-7e98-4c98-8ece-ab3e7bb83b6a" width="400" height="400">
 ![1698495902376](https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/8c1e38bb-7e98-4c98-8ece-ab3e7bb83b6a)
 ![1698495868524](https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/0352b781-d2a8-40ca-b1b6-f18fe44a3dcd)
 ![1698495890787](https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/2d2d9b77-ae3b-4eed-86f0-73391046de7d)
