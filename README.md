@@ -1,3 +1,6 @@
+https://github.com/KanatBayalbayev/ArithmetiQuest/assets/115481348/69d43df7-f6b2-4e00-9a16-c54a2e7e6b2a
+
+
 <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/83871c1e-f7fa-4f61-b592-5a9866056a1d" width="320" height="700"> <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/f19445d9-9236-4326-99e6-ea547bfc169d" width="320" height="700">
 <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/8c1e38bb-7e98-4c98-8ece-ab3e7bb83b6a" width="320" height="700"> <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/0352b781-d2a8-40ca-b1b6-f18fe44a3dcd" width="320" height="700">
 <img src="https://github.com/KanatBayalbayev/BeInTouch/assets/115481348/2d2d9b77-ae3b-4eed-86f0-73391046de7d" width="320" height="700">
